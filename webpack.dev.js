@@ -29,7 +29,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: "NAME",
+      title: "invaders from space",
       template: "src/index.ejs"
     }),
     new webpack.HotModuleReplacementPlugin(),
