@@ -7,6 +7,7 @@ import React, { Component } from "react";
 import db from "./db";
 import reducer from "./reducer";
 import thunk from "redux-thunk";
+import { Game } from "./components";
 import { Provider } from "react-redux";
 import { TodoList } from "./components";
 import { createStore, applyMiddleware, compose } from "redux";
@@ -23,33 +24,16 @@ export class App extends Component {
       });
     }
 
-    db.table("todos").toArray().then(todos => {
-      todos.forEach(todo => {
-        store.dispatch({
-          type: "ADD_TODO",
-          payload: todo
-        });
-      });
-    });
-
     return store;
   }
 
   render() {
+    const gameOn = navigator.standalone || process.env.LAUNCHED_FROM_HOMESCREEN;
+
     return(
       <Provider store={this.configureStore()}>
         <MuiThemeProvider>
-          {navigator.standalone || process.env.LAUNCHED_FROM_HOMESCREEN
-            ? <Paper style={{ height: "95vh" }}>
-                <AppBar
-                  title="Todo PWA"
-                  showMenuIconButton={false}
-                  zDepth={1}
-                />
-                <TodoList />
-              </Paper>
-            : <InstallInstructions />
-          }
+          {gameOn ? <Game /> : <InstallInstructions />}
         </MuiThemeProvider>
       </Provider>
     );
