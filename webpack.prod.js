@@ -9,18 +9,24 @@ module.exports = {
   output: {
     path: path.join(__dirname, "docs"),
     filename: "bundle.js",
-    publicPath: "/invaders from space/"
+    publicPath: "/invaders-from-space/"
   },
   module: {
-    loaders: [{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      loader: "babel-loader",
-      include: __dirname,
-      query: {
-        presets: ["es2015", "react"]
+    loaders: [
+      {
+        test: /\.(png|jpg|gif)$/,
+        loader: "file-loader"
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
+        include: __dirname,
+        query: {
+          presets: ["env", "react"]
+        }
       }
-    }]
+    ]
   },
   plugins: [
     new webpack.DefinePlugin({
