@@ -17,15 +17,21 @@ module.exports = {
     publicPath: "/"
   },
   module: {
-    loaders: [{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      loader: "babel-loader",
-      include: __dirname,
-      query: {
-        presets: ["es2015", "react"]
+    loaders: [
+      {
+        test: /\.(png|jpg|gif)$/,
+        loader: "file-loader"
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
+        include: __dirname,
+        query: {
+          presets: ["env", "react"]
+        }
       }
-    }]
+    ]
   },
   plugins: [
     new HtmlWebpackPlugin({
