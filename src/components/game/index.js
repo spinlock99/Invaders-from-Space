@@ -10,7 +10,10 @@ const styles = {
     height: "100%",
     margin: 0,
     overflow: "hidden",
-  }
+  },
+  spaceship: {
+    zIndex: 100,
+  },
 }
 
 export class Game extends React.Component {
@@ -19,6 +22,8 @@ export class Game extends React.Component {
 
     this.canvas = null;
     this.ship = null;
+    this.imagesToLoad = 2;
+
     this.state = {
       backgroundLoaded: props.backgroundLoaded
     };
@@ -27,12 +32,16 @@ export class Game extends React.Component {
 
     this.background = new Image();
     this.background.src = require("../../../images/background.png");
-    this.background.onload = this.draw;
+    this.background.onload = e => --this.imagesToLoad || this.draw();
 
     this.spaceship = new Image();
     this.spaceship.src = require("../../../images/spaceship.png");
+    this.spaceship.onload = e => --this.imagesToLoad || this.draw();
 
     this.y = 0;
+
+    this.shipX = 207;
+    this.shipY = 700;
   }
 
   draw() {
@@ -40,19 +49,31 @@ export class Game extends React.Component {
 
     const ctx = this.canvas.getContext('2d');
     ctx.drawImage(this.background, 0, this.y);
-    ctx.drawImage(this.background, 0, this.y - this.canvas.height);
-    this.y += 1;
-    if (this.y >= 120) this.y = 120 - this.background.height;
+    ctx.drawImage(this.background, 0, (this.y + 360));
+    ctx.drawImage(this.background, 0, (this.y - 360));
+    if (++this.y >= 360) this.y = 0;
 
     const shipCtx = this.ship.getContext('2d');
-    ctx.drawImage(this.spaceship, 130, 120);
+    ctx.drawImage(this.spaceship, this.shipX, this.shipY);
   }
 
   render() {
     return [
-      <canvas key="background" style={styles.canvas} ref={e => this.canvas = e} onTouchStart={e => console.log("touch start")} />,
+      <canvas key="ship"
+              width="414"
+              height="736"
+              style={styles.spaceship}
+              ref={element => this.ship = element}
+      />,
+      <canvas key="background"
+              width="414"
+              height="736"
+              style={styles.canvas}
+              ref={element => this.canvas = element}
+              onTouchStart={event => { this.shipX = event.touches[0].pageX - 20; this.shipY = event.touches[0].pageY - 30 }}
+              onTouchMove={event => { this.shipX = event.touches[0].pageX - 20; this.shipY = event.touches[0].pageY - 30 }}
+      />,
       <canvas key="main" />,
-      <canvas key="ship" ref={e => this.ship = e} />,
     ];
   }
 };
