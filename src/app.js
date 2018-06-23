@@ -7,9 +7,8 @@ import React, { Component } from "react";
 import db from "./db";
 import reducer from "./reducer";
 import thunk from "redux-thunk";
-import { Game } from "./components";
+import { Game } from "game";
 import { Provider } from "react-redux";
-import { TodoList } from "./components";
 import { createStore, applyMiddleware, compose } from "redux";
 
 export class App extends Component {

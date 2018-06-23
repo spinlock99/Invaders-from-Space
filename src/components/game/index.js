@@ -34,15 +34,15 @@ export class Game extends React.Component {
     this.move = this.move.bind(this)
 
     this.background = new Image();
-    this.background.src = require("../../../images/background.png");
+    this.background.src = require("background.png");
     this.background.onload = e => --this.imagesToLoad || this.draw();
 
     this.spaceship = new Image();
-    this.spaceship.src = require("../../../images/spaceship.png");
+    this.spaceship.src = require("spaceship.png");
     this.spaceship.onload = e => --this.imagesToLoad || this.draw();
 
     this.laserImage = new Image();
-    this.laserImage.src = require("../../../images/laser.png");
+    this.laserImage.src = require("laser.png");
     this.laserImage.onload = e => --this.imagesToLoad || this.draw();
 
     this.y = 0;
