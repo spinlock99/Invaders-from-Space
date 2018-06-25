@@ -1,5 +1,6 @@
 import React from "react";
 import Background from "canvas/background";
+import Ship from "canvas/ship";
 
 const styles = {
   bg: {
@@ -18,13 +19,9 @@ const styles = {
   },
 }
 
-const thumbHeight = 100;
-
 export class Game extends React.Component {
   constructor(props) {
     super(props);
-
-    this.laser = null;
 
     this.contexts = {
       background: null,
@@ -44,12 +41,10 @@ export class Game extends React.Component {
 
     this.init = this.init.bind(this);
     this.draw = this.draw.bind(this);
-    this.move = this.move.bind(this);
+    this.move = event => this.ship.move(event.touches[0].pageX, event.touches[0].pageY);
 
     this.shipX = 190;
     this.shipY = 700;
-    this.shipNextX = 190;
-    this.shipNextY = 700;
 
     this.laserX = this.shipX + 19;
     this.laserY = this.shipY - 15;
@@ -60,9 +55,9 @@ export class Game extends React.Component {
     this.images.background.src = require("background.png");
     this.images.background.onload = e => --this.imagesToLoad || this.init();
 
-    this.spaceship = new Image();
-    this.spaceship.src = require("spaceship.png");
-    this.spaceship.onload = e => --this.imagesToLoad || this.init();
+    this.images.ship= new Image();
+    this.images.ship.src = require("spaceship.png");
+    this.images.ship.onload = e => --this.imagesToLoad || this.init();
 
     this.laserImage = new Image();
     this.laserImage.src = require("laser.png");
@@ -71,8 +66,12 @@ export class Game extends React.Component {
 
   init() {
     Background.prototype.context = this.contexts.background;
-    this.background = new Background()
+    this.background = new Background();
     this.background.init(0, 0, this.images.background);
+
+    Ship.prototype.context = this.contexts.ship;
+    this.ship = new Ship();
+    this.ship.init(this.shipX, this.shipY, this.images.ship);
 
     this.draw();
   }
@@ -81,12 +80,7 @@ export class Game extends React.Component {
     window.requestAnimationFrame(this.draw);
 
     this.background.draw();
-
-    // Spaceship
-    this.contexts.ship.clearRect(this.shipX, this.shipY, this.spaceship.width, this.spaceship.height);
-    this.shipX = this.shipNextX;
-    this.shipY = this.shipNextY;
-    this.contexts.ship.drawImage(this.spaceship, this.shipX, this.shipY);
+    this.ship.draw();
 
     // Lasers
     this.contexts.ship.clearRect(this.laserX, this.laserY, this.laserImage.width, this.laserImage.height);
@@ -96,11 +90,6 @@ export class Game extends React.Component {
       this.laserX = this.shipX + 19;
     }
     this.contexts.ship.drawImage(this.laserImage, this.laserX, this.laserY);
-  }
-
-  move(event) {
-    this.shipNextX = event.touches[0].pageX - this.spaceship.width / 2;
-    this.shipNextY = event.touches[0].pageY - thumbHeight;
   }
 
 
