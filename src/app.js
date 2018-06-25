@@ -5,9 +5,9 @@ import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import Paper from "material-ui/Paper";
 import React, { Component } from "react";
 import db from "./db";
-import reducer from "./reducer";
+import reducer from "reducer";
 import thunk from "redux-thunk";
-import { Game } from "game";
+import { Game } from "components/game";
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose } from "redux";
 
@@ -17,8 +17,8 @@ export class App extends Component {
     const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));
 
     if (module.hot) {
-      module.hot.accept("./reducer", () => {
-        const nextRootReducer = require("./reducer");
+      module.hot.accept("reducer", () => {
+        const nextRootReducer = require("reducer");
         store.replaceReducer(nextRootReducer);
       });
     }

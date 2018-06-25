@@ -1,4 +1,6 @@
 import React from "react";
+import Background from "canvas/background";
+import Ship from "canvas/ship";
 
 const styles = {
   bg: {
@@ -21,68 +23,58 @@ export class Game extends React.Component {
   constructor(props) {
     super(props);
 
-    this.bg = null;
-    this.ship = null;
-    this.laser = null;
-    this.imagesToLoad = 3;
+    this.start = { x: 190, y: 700 };
 
-    this.state = {
-      backgroundLoaded: props.backgroundLoaded
+    this.contexts = {
+      background: null,
+      ship: null,
+    };
+    this.setBackgroundContext = element => element && (this.contexts.background = element.getContext('2d'));
+    this.setShipContext = element => element && (this.contexts.ship = element.getContext('2d'));
+
+    this.images = {
+      background: null,
+      ship: null,
+      laser: null,
+    };
+    this.imagesToLoad = Object.keys(this.images).length;
+    this.images.background = new Image();
+    this.images.background.src = require("background.png");
+    this.images.background.onload = e => --this.imagesToLoad || this.init();
+
+    this.images.ship= new Image();
+    this.images.ship.src = require("spaceship.png");
+    this.images.ship.onload = e => --this.imagesToLoad || this.init();
+
+    this.images.laser = new Image();
+    this.images.laser.src = require("laser.png");
+    this.images.laser.onload = e => --this.imagesToLoad || this.init();
+
+    this.move = event => this.ship.move(event.touches[0].pageX, event.touches[0].pageY);
+
+    this.init = () => {
+      Background.prototype.context = this.contexts.background;
+      this.background = new Background();
+      this.background.init(0, 0, this.images.background);
+
+      Ship.prototype.context = this.contexts.ship;
+      this.ship = new Ship();
+      this.ship.init(this.start.x, this.start.y, this.images.ship);
+      this.ship.laserImage = this.images.laser;
+
+      this.animate();
+      this.ship.draw();
     };
 
-    this.draw = this.draw.bind(this)
-    this.move = this.move.bind(this)
+    this.animate = () => {
+      window.requestAnimationFrame(this.animate);
 
-    this.background = new Image();
-    this.background.src = require("background.png");
-    this.background.onload = e => --this.imagesToLoad || this.draw();
+      this.background.draw();
 
-    this.spaceship = new Image();
-    this.spaceship.src = require("spaceship.png");
-    this.spaceship.onload = e => --this.imagesToLoad || this.draw();
+      this.ship.fire(this.ship.x, this.ship.y, this.images.laser.width, this.images.laser.height);
+      this.ship.animateBullets();
+    };
 
-    this.laserImage = new Image();
-    this.laserImage.src = require("laser.png");
-    this.laserImage.onload = e => --this.imagesToLoad || this.draw();
-
-    this.y = 0;
-
-    this.shipX = 190;
-    this.shipY = 700;
-    this.shipNextX = 190;
-    this.shipNextY = 700;
-
-    this.laserX = this.shipX + 19;
-    this.laserY = this.shipY - 15;
-  }
-
-  draw() {
-    window.requestAnimationFrame(this.draw);
-
-    const ctx = this.bg.getContext('2d');
-    ctx.drawImage(this.background, 0, this.y);
-    ctx.drawImage(this.background, 0, (this.y + 360));
-    ctx.drawImage(this.background, 0, (this.y - 360));
-    if (++this.y >= 360) this.y = 0;
-
-    const shipCtx = this.ship.getContext('2d');
-    shipCtx.clearRect(this.shipX, this.shipY, this.spaceship.width, this.spaceship.height);
-    this.shipX = this.shipNextX;
-    this.shipY = this.shipNextY;
-    shipCtx.drawImage(this.spaceship, this.shipX, this.shipY);
-
-    shipCtx.clearRect(this.laserX, this.laserY, this.laserImage.width, this.laserImage.height);
-    this.laserY -= 5;
-    if (this.laserY < 0) {
-      this.laserY = this.shipY - 15;
-      this.laserX = this.shipX +19;
-    }
-    shipCtx.drawImage(this.laserImage, this.laserX, this.laserY);
-  }
-
-  move(event) {
-    this.shipNextX = event.touches[0].pageX - 20;
-    this.shipNextY = event.touches[0].pageY - 30;
   }
 
   render() {
@@ -91,13 +83,13 @@ export class Game extends React.Component {
               width="414"
               height="736"
               style={styles.bg}
-              ref={element => this.bg = element}
+              ref={this.setBackgroundContext}
       />,
       <canvas key="ship"
               width="414"
               height="736"
               style={styles.spaceship}
-              ref={element => this.ship = element}
+              ref={this.setShipContext}
               onTouchStart={this.move}
               onTouchMove={this.move}
       />,
