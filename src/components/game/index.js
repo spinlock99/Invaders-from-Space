@@ -23,6 +23,8 @@ export class Game extends React.Component {
   constructor(props) {
     super(props);
 
+    this.start = { x: 190, y: 700 };
+
     this.contexts = {
       background: null,
       ship: null,
@@ -36,21 +38,6 @@ export class Game extends React.Component {
       laser: null,
     };
     this.imagesToLoad = Object.keys(this.images).length;
-
-    this.componentDidMount = this.componentDidMount.bind(this);
-
-    this.init = this.init.bind(this);
-    this.draw = this.draw.bind(this);
-    this.move = event => this.ship.move(event.touches[0].pageX, event.touches[0].pageY);
-
-    this.shipX = 190;
-    this.shipY = 700;
-
-    this.laserX = this.shipX + 19;
-    this.laserY = this.shipY - 15;
-  }
-
-  componentDidMount() {
     this.images.background = new Image();
     this.images.background.src = require("background.png");
     this.images.background.onload = e => --this.imagesToLoad || this.init();
@@ -59,39 +46,36 @@ export class Game extends React.Component {
     this.images.ship.src = require("spaceship.png");
     this.images.ship.onload = e => --this.imagesToLoad || this.init();
 
-    this.laserImage = new Image();
-    this.laserImage.src = require("laser.png");
-    this.laserImage.onload = e => --this.imagesToLoad || this.init();
+    this.images.laser = new Image();
+    this.images.laser.src = require("laser.png");
+    this.images.laser.onload = e => --this.imagesToLoad || this.init();
+
+    this.move = event => this.ship.move(event.touches[0].pageX, event.touches[0].pageY);
+
+    this.init = () => {
+      Background.prototype.context = this.contexts.background;
+      this.background = new Background();
+      this.background.init(0, 0, this.images.background);
+
+      Ship.prototype.context = this.contexts.ship;
+      this.ship = new Ship();
+      this.ship.init(this.start.x, this.start.y, this.images.ship);
+      this.ship.laserImage = this.images.laser;
+
+      this.animate();
+      this.ship.draw();
+    };
+
+    this.animate = () => {
+      window.requestAnimationFrame(this.animate);
+
+      this.background.draw();
+
+      this.ship.fire(this.ship.x, this.ship.y, this.images.laser.width, this.images.laser.height);
+      this.ship.animateBullets();
+    };
+
   }
-
-  init() {
-    Background.prototype.context = this.contexts.background;
-    this.background = new Background();
-    this.background.init(0, 0, this.images.background);
-
-    Ship.prototype.context = this.contexts.ship;
-    this.ship = new Ship();
-    this.ship.init(this.shipX, this.shipY, this.images.ship);
-
-    this.draw();
-  }
-
-  draw() {
-    window.requestAnimationFrame(this.draw);
-
-    this.background.draw();
-    this.ship.draw();
-
-    // Lasers
-    this.contexts.ship.clearRect(this.laserX, this.laserY, this.laserImage.width, this.laserImage.height);
-    this.laserY -= 5;
-    if (this.laserY < 0) {
-      this.laserY = this.shipY - 15;
-      this.laserX = this.shipX + 19;
-    }
-    this.contexts.ship.drawImage(this.laserImage, this.laserX, this.laserY);
-  }
-
 
   render() {
     return [
