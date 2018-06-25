@@ -2,6 +2,7 @@ import React from "react";
 import Background from "canvas/background";
 import Ship from "canvas/ship";
 import ImageRepository from "canvas/image-repository";
+import Laser from "canvas/laser";
 
 const styles = {
   bg: {
@@ -41,20 +42,23 @@ export class Game extends React.Component {
       this.background.init(0, 0, this.images.background);
 
       Ship.prototype.context = this.contexts.ship;
+      Laser.prototype.context = this.contexts.ship;
+
       this.ship = new Ship();
       this.ship.init(this.start.x, this.start.y, this.images.ship);
       this.ship.laserImage = this.images.laser;
+      this.ship.lasers.init(this.images.laser);
 
       this.animate();
       this.ship.draw();
-      setInterval(() => this.ship.fire(this.ship.x, this.ship.y, this.images.laser.width, this.images.laser.height), 100);
+      setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
     };
 
     this.animate = () => {
       window.requestAnimationFrame(this.animate);
 
       this.background.draw();
-      this.ship.animateBullets();
+      this.ship.lasers.animate();
     };
 
     this.images = new ImageRepository(this.init);
