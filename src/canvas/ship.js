@@ -5,7 +5,7 @@ function Ship() {
   this.nextX = null;
 
   this.laserX = 0;
-  this.laserY = -1;
+  this.laserY = 0;
   this.laserWidth = 0;
   this.laserHeight = 0;
 
@@ -31,7 +31,7 @@ function Ship() {
   };
 
   this.fire = function (x, y, width, height) {
-    if (this.laserY < 0) {
+    if (this.laserY <= 0) {
       this.laserWidth = width;
       this.laserHeight = height;
       // clear laser rect before moving laser to new firing position
