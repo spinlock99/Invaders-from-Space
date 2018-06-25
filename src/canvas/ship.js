@@ -1,45 +1,30 @@
-import Drawable from './drawable';
+import Drawable from "canvas/drawable";
+import Pool from "canvas/pool";
 
 function Ship() {
-  this.nextX = null;
-  this.nextX = null;
-
-  this.laserX = 0;
-  this.laserY = -1;
-  this.laserWidth = 0;
-  this.laserHeight = 0;
-
   this.thumbHeight = 100;
+  this.lasers = new Pool(40);
+  this.leftGunOffset = 5;
+  this.rightGunOffset = 33;
 
-  this.draw = function () {
+
+  this.nextX = null;
+  this.nextY = null;
+
+  this.draw = () => {
     this.context.clearRect(this.x, this.y, this.width, this.height);
     this.x = this.nextX || this.x;
     this.y = this.nextY || this.y;
     this.context.drawImage(this.image, this.x, this.y);
   }
 
-  this.animateBullets = function () {
-    this.context.clearRect(this.laserX, this.laserY, this.laserWidth, this.laserHeight);
-    this.laserY -= 5;
-    this.context.drawImage(this.laserImage, this.laserX, this.laserY);
-  };
-
-  this.move = function (x, y) {
+  this.move = (x, y) => {
     this.nextX = x - this.image.width / 2;
     this.nextY = y - this.thumbHeight;
     this.draw();
   };
 
-  this.fire = function (x, y, width, height) {
-    if (this.laserY < 0) {
-      this.laserWidth = width;
-      this.laserHeight = height;
-      // clear laser rect before moving laser to new firing position
-      this.context.clearRect(this.laserX, this.laserY, this.laserWidth, this.laserHeight);
-      this.laserX = x + 19;
-      this.laserY = y - 15;
-    }
-  };
+  this.fire = () => this.lasers.getTwo(this.x + this.leftGunOffset, this.x + this.rightGunOffset, this.y, 3);
 }
 
 Ship.prototype = new Drawable();

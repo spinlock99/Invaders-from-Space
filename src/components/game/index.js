@@ -1,6 +1,8 @@
 import React from "react";
 import Background from "canvas/background";
 import Ship from "canvas/ship";
+import ImageRepository from "canvas/image-repository";
+import Laser from "canvas/laser";
 
 const styles = {
   bg: {
@@ -32,24 +34,6 @@ export class Game extends React.Component {
     this.setBackgroundContext = element => element && (this.contexts.background = element.getContext('2d'));
     this.setShipContext = element => element && (this.contexts.ship = element.getContext('2d'));
 
-    this.images = {
-      background: null,
-      ship: null,
-      laser: null,
-    };
-    this.imagesToLoad = Object.keys(this.images).length;
-    this.images.background = new Image();
-    this.images.background.src = require("background.png");
-    this.images.background.onload = e => --this.imagesToLoad || this.init();
-
-    this.images.ship= new Image();
-    this.images.ship.src = require("spaceship.png");
-    this.images.ship.onload = e => --this.imagesToLoad || this.init();
-
-    this.images.laser = new Image();
-    this.images.laser.src = require("laser.png");
-    this.images.laser.onload = e => --this.imagesToLoad || this.init();
-
     this.move = event => this.ship.move(event.touches[0].pageX, event.touches[0].pageY);
 
     this.init = () => {
@@ -58,23 +42,26 @@ export class Game extends React.Component {
       this.background.init(0, 0, this.images.background);
 
       Ship.prototype.context = this.contexts.ship;
+      Laser.prototype.context = this.contexts.ship;
+
       this.ship = new Ship();
       this.ship.init(this.start.x, this.start.y, this.images.ship);
       this.ship.laserImage = this.images.laser;
+      this.ship.lasers.init(this.images.laser);
 
       this.animate();
       this.ship.draw();
+      setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
     };
 
     this.animate = () => {
       window.requestAnimationFrame(this.animate);
 
       this.background.draw();
-
-      this.ship.fire(this.ship.x, this.ship.y, this.images.laser.width, this.images.laser.height);
-      this.ship.animateBullets();
+      this.ship.lasers.animate();
     };
 
+    this.images = new ImageRepository(this.init);
   }
 
   render() {
