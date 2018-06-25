@@ -24,7 +24,7 @@ module.exports = function(env) {
     resolve: {
       modules: [
         path.resolve(__dirname, 'images'),
-        path.resolve(__dirname, 'src', 'components'),
+        path.resolve(__dirname, 'src'),
         'node_modules',
       ]
     },
