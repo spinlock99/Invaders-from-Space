@@ -1,4 +1,5 @@
 import React from "react";
+import Background from "canvas/background";
 
 const styles = {
   bg: {
@@ -17,35 +18,33 @@ const styles = {
   },
 }
 
+const thumbHeight = 100;
+
 export class Game extends React.Component {
   constructor(props) {
     super(props);
 
-    this.bg = null;
-    this.ship = null;
     this.laser = null;
-    this.imagesToLoad = 3;
 
-    this.state = {
-      backgroundLoaded: props.backgroundLoaded
+    this.contexts = {
+      background: null,
+      ship: null,
     };
+    this.setBackgroundContext = element => element && (this.contexts.background = element.getContext('2d'));
+    this.setShipContext = element => element && (this.contexts.ship = element.getContext('2d'));
 
-    this.draw = this.draw.bind(this)
-    this.move = this.move.bind(this)
+    this.images = {
+      background: null,
+      ship: null,
+      laser: null,
+    };
+    this.imagesToLoad = Object.keys(this.images).length;
 
-    this.background = new Image();
-    this.background.src = require("background.png");
-    this.background.onload = e => --this.imagesToLoad || this.draw();
+    this.componentDidMount = this.componentDidMount.bind(this);
 
-    this.spaceship = new Image();
-    this.spaceship.src = require("spaceship.png");
-    this.spaceship.onload = e => --this.imagesToLoad || this.draw();
-
-    this.laserImage = new Image();
-    this.laserImage.src = require("laser.png");
-    this.laserImage.onload = e => --this.imagesToLoad || this.draw();
-
-    this.y = 0;
+    this.init = this.init.bind(this);
+    this.draw = this.draw.bind(this);
+    this.move = this.move.bind(this);
 
     this.shipX = 190;
     this.shipY = 700;
@@ -56,34 +55,54 @@ export class Game extends React.Component {
     this.laserY = this.shipY - 15;
   }
 
+  componentDidMount() {
+    this.images.background = new Image();
+    this.images.background.src = require("background.png");
+    this.images.background.onload = e => --this.imagesToLoad || this.init();
+
+    this.spaceship = new Image();
+    this.spaceship.src = require("spaceship.png");
+    this.spaceship.onload = e => --this.imagesToLoad || this.init();
+
+    this.laserImage = new Image();
+    this.laserImage.src = require("laser.png");
+    this.laserImage.onload = e => --this.imagesToLoad || this.init();
+  }
+
+  init() {
+    Background.prototype.context = this.contexts.background;
+    this.background = new Background()
+    this.background.init(0, 0, this.images.background);
+
+    this.draw();
+  }
+
   draw() {
     window.requestAnimationFrame(this.draw);
 
-    const ctx = this.bg.getContext('2d');
-    ctx.drawImage(this.background, 0, this.y);
-    ctx.drawImage(this.background, 0, (this.y + 360));
-    ctx.drawImage(this.background, 0, (this.y - 360));
-    if (++this.y >= 360) this.y = 0;
+    this.background.draw();
 
-    const shipCtx = this.ship.getContext('2d');
-    shipCtx.clearRect(this.shipX, this.shipY, this.spaceship.width, this.spaceship.height);
+    // Spaceship
+    this.contexts.ship.clearRect(this.shipX, this.shipY, this.spaceship.width, this.spaceship.height);
     this.shipX = this.shipNextX;
     this.shipY = this.shipNextY;
-    shipCtx.drawImage(this.spaceship, this.shipX, this.shipY);
+    this.contexts.ship.drawImage(this.spaceship, this.shipX, this.shipY);
 
-    shipCtx.clearRect(this.laserX, this.laserY, this.laserImage.width, this.laserImage.height);
+    // Lasers
+    this.contexts.ship.clearRect(this.laserX, this.laserY, this.laserImage.width, this.laserImage.height);
     this.laserY -= 5;
     if (this.laserY < 0) {
       this.laserY = this.shipY - 15;
-      this.laserX = this.shipX +19;
+      this.laserX = this.shipX + 19;
     }
-    shipCtx.drawImage(this.laserImage, this.laserX, this.laserY);
+    this.contexts.ship.drawImage(this.laserImage, this.laserX, this.laserY);
   }
 
   move(event) {
-    this.shipNextX = event.touches[0].pageX - 20;
-    this.shipNextY = event.touches[0].pageY - 30;
+    this.shipNextX = event.touches[0].pageX - this.spaceship.width / 2;
+    this.shipNextY = event.touches[0].pageY - thumbHeight;
   }
+
 
   render() {
     return [
@@ -91,13 +110,13 @@ export class Game extends React.Component {
               width="414"
               height="736"
               style={styles.bg}
-              ref={element => this.bg = element}
+              ref={this.setBackgroundContext}
       />,
       <canvas key="ship"
               width="414"
               height="736"
               style={styles.spaceship}
-              ref={element => this.ship = element}
+              ref={this.setShipContext}
               onTouchStart={this.move}
               onTouchMove={this.move}
       />,
