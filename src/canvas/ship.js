@@ -2,11 +2,14 @@ import Drawable from "canvas/drawable";
 import Pool from "canvas/pool";
 
 function Ship() {
-  this.nextX = null;
-  this.nextY = null;
-
   this.thumbHeight = 100;
   this.lasers = new Pool(40);
+  this.leftGunOffset = 5;
+  this.rightGunOffset = 33;
+
+
+  this.nextX = null;
+  this.nextY = null;
 
   this.draw = () => {
     this.context.clearRect(this.x, this.y, this.width, this.height);
@@ -21,7 +24,7 @@ function Ship() {
     this.draw();
   };
 
-  this.fire = () => this.lasers.getTwo(this.x + 5, this.x + 33, this.y, 3);
+  this.fire = () => this.lasers.getTwo(this.x + this.leftGunOffset, this.x + this.rightGunOffset, this.y, 3);
 }
 
 Ship.prototype = new Drawable();
