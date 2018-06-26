@@ -3,6 +3,9 @@ import Background from "canvas/background";
 import Ship from "canvas/ship";
 import ImageRepository from "canvas/image-repository";
 import Laser from "canvas/laser";
+import Enemy from "canvas/enemy";
+import EnemyLaser from "canvas/enemy-laser";
+import Pool from "canvas/pool";
 
 const styles = {
   canvas: {
@@ -29,17 +32,7 @@ const styles = {
 export class Game extends React.Component {
   constructor(props) {
     super(props);
-
     this.start = { x: 190, y: 700 };
-
-    this.contexts = {
-      background: null,
-      ship: null,
-    };
-    this.elements = {
-      main: {},
-    };
-
     this.images = new ImageRepository(this.init);
   }
 
@@ -49,7 +42,24 @@ export class Game extends React.Component {
 
     this.ship = new Ship();
     this.ship.init(this.start.x, this.start.y, this.images.ship);
-    this.ship.lasers.init(this.images.laser);
+    this.ship.lasers.init("laser", this.images.laser);
+
+    this.enemies = new Pool(30);
+    this.enemies.init("enemy", this.images.enemy);
+    let x = 100;
+    let y = -this.images.enemy.height;
+    let spacer = y * 1.5;
+    for (let i = 1; i <= 18; i++) {
+      this.enemies.get(x, y, 2);
+      x += this.images.enemy.width + 25;
+      if (i % 6 === 0) {
+        x = 100;
+        y += spacer;
+      }
+    }
+
+    Enemy.prototype.lasers = new Pool(50);
+    Enemy.prototype.lasers.init("enemyLaser", this.images.enemyLaser);
 
     this.animate();
     setTimeout(() => this.ship.draw(), 200);
@@ -70,6 +80,8 @@ export class Game extends React.Component {
   setMain = element => {
     if (!element) return;
     Laser.prototype.element = this.extract(element);
+    Enemy.prototype.element = this.extract(element);
+    EnemyLaser.prototype.element = this.extract(element);
   };
 
   setShip = element => {
@@ -84,6 +96,8 @@ export class Game extends React.Component {
 
     this.background.draw();
     this.ship.lasers.animate();
+    this.enemies.animate();
+    Enemy.prototype.lasers.animate();
   };
 
   render() {

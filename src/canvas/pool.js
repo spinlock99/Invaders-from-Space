@@ -1,14 +1,23 @@
 import Laser from "canvas/laser";
+import Enemy from "canvas/enemy";
+import EnemyLaser from "canvas/enemy-laser";
 
 export default function Pool(size) {
   this.size = size;
   this.pool = [];
 
-  this.init = image => {
+  this.init = (type, image) => {
     for (let i = 0; i < this.size; i++) {
-      let laser = new Laser();
-      laser.init(0, 0, image);
-      this.pool[i] = laser;
+      let object = null;
+      if (type === "laser") {
+        object = new Laser();
+      } else if (type === "enemy") {
+        object = new Enemy();
+      } else if (type === "enemyLaser") {
+        object = new EnemyLaser();
+      }
+      object.init(0, 0, image);
+      this.pool[i] = object;
     }
   };
 
