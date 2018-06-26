@@ -9,12 +9,20 @@ export default function Pool(size) {
   this.init = (type, image) => {
     for (let i = 0; i < this.size; i++) {
       let object = null;
-      if (type === "laser") {
-        object = new Laser();
-      } else if (type === "enemy") {
-        object = new Enemy();
-      } else if (type === "enemyLaser") {
-        object = new EnemyLaser();
+      switch (type) {
+        case "laser":
+          object = new Laser();
+          object.type = "laser";
+          object.collidableWith = "enemy";
+          break;
+        case "enemy":
+          object = new Enemy();
+          break;
+        case "enemyLaser":
+          object = new EnemyLaser();
+          object.type = "enemyLaser";
+          object.collidableWith = "ship";
+          break;
       }
       object.init(0, 0, image);
       this.pool[i] = object;
@@ -45,4 +53,15 @@ export default function Pool(size) {
       }
     }
   };
+
+  this.getPool = () =>
+    {
+      var obj = [];
+      for (var i = 0; i < size; i++) {
+        if (this.pool[i].alive) {
+          obj.push(this.pool[i]);
+        }
+      }
+      return obj;
+    };
 }

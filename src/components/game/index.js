@@ -6,35 +6,54 @@ import Laser from "canvas/laser";
 import Enemy from "canvas/enemy";
 import EnemyLaser from "canvas/enemy-laser";
 import Pool from "canvas/pool";
-
-const styles = {
-  canvas: {
-    position: "absolute",
-    top: "0px",
-    left: "0px",
-    background: "transparent",
-    width: "100%",
-    height: "100%",
-    margin: 0,
-    overflow: "hidden",
-  },
-  bg: {
-    zIndex: -2,
-  },
-  main: {
-    zIndex: -1,
-  },
-  ship: {
-    zIndex: 0,
-  },
-}
+import QuadTree from "canvas/quad-tree";
+import styles from "./styles";
 
 export class Game extends React.Component {
   constructor(props) {
     super(props);
+    this.quadTree = null;
     this.start = { x: 190, y: 700 };
     this.images = new ImageRepository(this.init);
   }
+
+  animate = () => {
+    this.quadTree.clear();
+    this.quadTree.insert(this.ship.lasers.getPool());
+    this.quadTree.insert(this.enemies.getPool());
+    this.detectCollision();
+
+    window.requestAnimationFrame(this.animate);
+
+    this.background.draw();
+    this.ship.lasers.animate();
+    this.enemies.animate();
+    Enemy.prototype.lasers.animate();
+  };
+
+  detectCollision = () =>
+    {
+      var objects = [];
+      this.quadTree.getAllObjects(objects);
+
+      for (var x = 0, len = objects.length; x < len; x++) {
+        var obj = [];
+        this.quadTree.findObjects(obj, objects[x]);
+
+        for (var y = 0, length = obj.length; y < length; y++) {
+          // DETECT COLLISION ALGORITHM
+          if (objects[x].collidableWith === obj[y].type && (
+            objects[x].x < obj[y].x + obj[y].width &&
+            objects[x].x + objects[x].width > obj[y].x &&
+            objects[x].y < obj[y].y + obj[y].height &&
+            objects[x].y + objects[x].height > obj[y].y
+          )) {
+            objects[x].isColliding = true;
+            obj[y].isColliding = true;
+          }
+        }
+      }
+    };
 
   init = () => {
     this.background = new Background();
@@ -70,39 +89,35 @@ export class Game extends React.Component {
     }
   };
 
-  extract = element => ({
-    context: element.getContext("2d"),
-    height: element.height,
-    width: element.width,
-  });
+  setMain = element =>
+    {
+      if (!element) return;
+      this.quadTree = new QuadTree({ x: 0, y: 0, width: element.width, height: element.height });
+      Laser.prototype.element = this.extract(element);
+      Enemy.prototype.element = this.extract(element);
+      EnemyLaser.prototype.element = this.extract(element);
+    };
 
-  setBackground = element => {
-    if (!element) return;
-    Background.prototype.element = this.extract(element);
-  };
+  setBackground = element =>
+    {
+      if (!element) return;
+      Background.prototype.element = this.extract(element);
+    };
 
-  setMain = element => {
-    if (!element) return;
-    Laser.prototype.element = this.extract(element);
-    Enemy.prototype.element = this.extract(element);
-    EnemyLaser.prototype.element = this.extract(element);
-  };
+  setShip = element =>
+    {
+      if (!element) return;
+      Ship.prototype.element = this.extract(element);
+    };
 
-  setShip = element => {
-    if (!element) return;
-    Ship.prototype.element = this.extract(element);
-  };
+  extract = element =>
+    ({
+      context: element.getContext("2d"),
+      height: element.height,
+      width: element.width,
+    });
 
   move = event => this.ship.move(event.touches[0].pageX, event.touches[0].pageY);
-
-  animate = () => {
-    window.requestAnimationFrame(this.animate);
-
-    this.background.draw();
-    this.ship.lasers.animate();
-    this.enemies.animate();
-    Enemy.prototype.lasers.animate();
-  };
 
   render() {
     return [
