@@ -4,10 +4,8 @@ const OfflinePlugin = require("offline-plugin");
 const path = require("path");
 const webpack = require("webpack");
 
-module.exports = function(env) {
-  console.log("env: ", env)
-
-  return {
+module.exports = env =>
+  ({
     entry: env == 'prod' ? "./index.js" : {
       app: [
         "webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000",
@@ -68,5 +66,4 @@ module.exports = function(env) {
       new webpack.NoEmitOnErrorsPlugin(),
       new Dotenv()
     ])
-  };
-};
+  })
