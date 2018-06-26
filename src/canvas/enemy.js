@@ -2,8 +2,10 @@ import Drawable from "canvas/drawable";
 import Pool from "canvas/pool";
 
 function Enemy() {
-  this.chanceToFire = .01;
+  this.type = "enemy";
+  this.collidableWith = "laser";
   this.alive = false;
+  this.chanceToFire = .01;
 
   this.spawn = (x, y, speed) => {
     this.alive = true;
@@ -17,14 +19,19 @@ function Enemy() {
 
     this.leftEdge = this.x - 20;
     this.rightEdge = this.x;
-    this.bottomEdge = this.y + 140;
+    this.bottomEdge = this.y + 200;
   };
 
   this.draw = () => {
     this.element.context.clearRect(this.x - 1, this.y, this.width + 1, this.height);
     this.move();
-    this.element.context.drawImage(this.image, this.x, this.y);
+
+    if (this.isColliding) return true;
+
     if (this.shouldFire()) this.fire();
+
+    this.element.context.drawImage(this.image, this.x, this.y);
+    return false;
   };
 
   this.move = () => {
@@ -54,6 +61,7 @@ function Enemy() {
     this.speedX = 0;
     this.speedY = 0;
     this.alive = false;
+    this.isColliding = false;
   }
 }
 

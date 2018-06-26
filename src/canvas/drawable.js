@@ -1,4 +1,9 @@
 export default function Drawable() {
+  this.speed = 0;
+  this.type = "";
+  this.collidableWith = "";
+  this.isColliding = false;
+
   this.init = (x, y, image) => {
     this.x = x;
     this.y = y;
@@ -9,4 +14,5 @@ export default function Drawable() {
 
   this.draw = () => {};
   this.move = () => {};
+  this.isCollidableWith = object => this.collidableWith === object.type;
 }

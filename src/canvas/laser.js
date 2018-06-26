@@ -8,6 +8,7 @@ function Laser() {
     this.y = 0;
     this.speed = 0;
     this.alive = false;
+    this.isColliding = false;
   };
 
   this.spawn = (x, y, speed) => {
@@ -21,13 +22,14 @@ function Laser() {
     this.element.context.clearRect(this.x, this.y, this.width, this.height);
     this.y -= this.speed;
 
-    if (this.y <= 0 - this.height) {
-      return true;
-    } else {
-      this.element.context.drawImage(this.image, this.x, this.y);
-      return false;
-    }
+    if (this.isColliding) return true;
+    if (this.isOffPage()) return true;
+
+    this.element.context.drawImage(this.image, this.x, this.y);
+    return false;
   };
+
+  this.isOffPage = () => this.y <= 0 - this.height;
 }
 
 Laser.prototype = new Drawable();
