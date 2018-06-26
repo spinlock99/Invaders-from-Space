@@ -3,9 +3,12 @@ import Background from "canvas/background";
 import Ship from "canvas/ship";
 import ImageRepository from "canvas/image-repository";
 import Laser from "canvas/laser";
+import Enemy from "canvas/enemy";
+import EnemyLaser from "canvas/enemy-laser";
+import Pool from "canvas/pool";
 
 const styles = {
-  bg: {
+  canvas: {
     position: "absolute",
     top: "0px",
     left: "0px",
@@ -14,9 +17,14 @@ const styles = {
     height: "100%",
     margin: 0,
     overflow: "hidden",
+  },
+  bg: {
     zIndex: -2,
   },
-  spaceship: {
+  main: {
+    zIndex: -1,
+  },
+  ship: {
     zIndex: 0,
   },
 }
@@ -24,63 +32,100 @@ const styles = {
 export class Game extends React.Component {
   constructor(props) {
     super(props);
-
     this.start = { x: 190, y: 700 };
-
-    this.contexts = {
-      background: null,
-      ship: null,
-    };
-    this.setBackgroundContext = element => element && (this.contexts.background = element.getContext('2d'));
-    this.setShipContext = element => element && (this.contexts.ship = element.getContext('2d'));
-
-    this.move = event => this.ship.move(event.touches[0].pageX, event.touches[0].pageY);
-
-    this.init = () => {
-      Background.prototype.context = this.contexts.background;
-      this.background = new Background();
-      this.background.init(0, 0, this.images.background);
-
-      Ship.prototype.context = this.contexts.ship;
-      Laser.prototype.context = this.contexts.ship;
-
-      this.ship = new Ship();
-      this.ship.init(this.start.x, this.start.y, this.images.ship);
-      this.ship.laserImage = this.images.laser;
-      this.ship.lasers.init(this.images.laser);
-
-      this.animate();
-      this.ship.draw();
-      setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
-    };
-
-    this.animate = () => {
-      window.requestAnimationFrame(this.animate);
-
-      this.background.draw();
-      this.ship.lasers.animate();
-    };
-
     this.images = new ImageRepository(this.init);
   }
+
+  init = () => {
+    this.background = new Background();
+    this.background.init(0, 0, this.images.background);
+
+    this.ship = new Ship();
+    this.ship.init(this.start.x, this.start.y, this.images.ship);
+    this.ship.lasers.init("laser", this.images.laser);
+
+    this.enemies = new Pool(30);
+    this.enemies.init("enemy", this.images.enemy);
+
+    // the enemy laser pool is shared by all enemies so we put it on the prototype.
+    Enemy.prototype.lasers.init("enemyLaser", this.images.enemyLaser);
+
+    this.animate();
+    setTimeout(() => this.ship.draw(), 200);
+    setTimeout(() => this.attack(), 200);
+    setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
+  };
+
+  attack = () => {
+    let x = 20;
+    let y = -this.images.enemy.height;
+    let spacer = y * 1.5;
+    for (let i = 1; i <= 18; i++) {
+      this.enemies.get(x, y, 2);
+      x += this.images.enemy.width + 25;
+      if (i % 6 === 0) {
+        x = 20;
+        y += spacer;
+      }
+    }
+  };
+
+  extract = element => ({
+    context: element.getContext("2d"),
+    height: element.height,
+    width: element.width,
+  });
+
+  setBackground = element => {
+    if (!element) return;
+    Background.prototype.element = this.extract(element);
+  };
+
+  setMain = element => {
+    if (!element) return;
+    Laser.prototype.element = this.extract(element);
+    Enemy.prototype.element = this.extract(element);
+    EnemyLaser.prototype.element = this.extract(element);
+  };
+
+  setShip = element => {
+    if (!element) return;
+    Ship.prototype.element = this.extract(element);
+  };
+
+  move = event => this.ship.move(event.touches[0].pageX, event.touches[0].pageY);
+
+  animate = () => {
+    window.requestAnimationFrame(this.animate);
+
+    this.background.draw();
+    this.ship.lasers.animate();
+    this.enemies.animate();
+    Enemy.prototype.lasers.animate();
+  };
 
   render() {
     return [
       <canvas key="background"
               width="414"
               height="736"
-              style={styles.bg}
-              ref={this.setBackgroundContext}
+              style={{ ...styles.canvas, ...styles.bg }}
+              ref={this.setBackground}
+      />,
+      <canvas key="main"
+              width="414"
+              height="736"
+              style={{ ...styles.canvas, ...styles.main }}
+              ref={this.setMain}
       />,
       <canvas key="ship"
               width="414"
               height="736"
-              style={styles.spaceship}
-              ref={this.setShipContext}
+              style={{ ...styles.canvas, ...styles.ship }}
+              ref={this.setShip}
               onTouchStart={this.move}
               onTouchMove={this.move}
       />,
-      <canvas key="main" />,
     ];
   }
 };

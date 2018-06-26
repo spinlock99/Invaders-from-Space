@@ -1,6 +1,6 @@
 import Drawable  from "canvas/drawable";
 
-function Laser() {
+function EnemyLaser() {
   this.alive = false;
 
   this.clear = () => {
@@ -21,7 +21,7 @@ function Laser() {
     this.element.context.clearRect(this.x, this.y, this.width, this.height);
     this.y -= this.speed;
 
-    if (this.y <= 0 - this.height) {
+    if (this.y >= this.element.height) {
       return true;
     } else {
       this.element.context.drawImage(this.image, this.x, this.y);
@@ -30,5 +30,5 @@ function Laser() {
   };
 }
 
-Laser.prototype = new Drawable();
-export default Laser;
+EnemyLaser.prototype = new Drawable();
+export default EnemyLaser;

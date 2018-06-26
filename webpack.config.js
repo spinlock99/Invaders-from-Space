@@ -41,7 +41,8 @@ module.exports = function(env) {
           loader: "babel-loader",
           include: __dirname,
           query: {
-            presets: ["env", "react"]
+            presets: ["env", "react"],
+            plugins: ["transform-class-properties", "transform-object-rest-spread"],
           }
         }
       ]
