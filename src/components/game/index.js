@@ -21,11 +21,11 @@ const styles = {
   bg: {
     zIndex: -2,
   },
-  spaceship: {
-    zIndex: 0,
-  },
   main: {
     zIndex: -1,
+  },
+  ship: {
+    zIndex: 0,
   },
 }
 
@@ -46,24 +46,28 @@ export class Game extends React.Component {
 
     this.enemies = new Pool(30);
     this.enemies.init("enemy", this.images.enemy);
-    let x = 100;
+
+    // the enemy laser pool is shared by all enemies so we put it on the prototype.
+    Enemy.prototype.lasers.init("enemyLaser", this.images.enemyLaser);
+
+    this.animate();
+    setTimeout(() => this.ship.draw(), 200);
+    setTimeout(() => this.attack(), 200);
+    setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
+  };
+
+  attack = () => {
+    let x = 20;
     let y = -this.images.enemy.height;
     let spacer = y * 1.5;
     for (let i = 1; i <= 18; i++) {
       this.enemies.get(x, y, 2);
       x += this.images.enemy.width + 25;
       if (i % 6 === 0) {
-        x = 100;
+        x = 20;
         y += spacer;
       }
     }
-
-    Enemy.prototype.lasers = new Pool(50);
-    Enemy.prototype.lasers.init("enemyLaser", this.images.enemyLaser);
-
-    this.animate();
-    setTimeout(() => this.ship.draw(), 200);
-    setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
   };
 
   extract = element => ({
@@ -117,7 +121,7 @@ export class Game extends React.Component {
       <canvas key="ship"
               width="414"
               height="736"
-              style={{ ...styles.canvas, ...styles.spaceship }}
+              style={{ ...styles.canvas, ...styles.ship }}
               ref={this.setShip}
               onTouchStart={this.move}
               onTouchMove={this.move}

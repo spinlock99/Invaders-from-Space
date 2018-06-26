@@ -1,8 +1,8 @@
 import Drawable from "canvas/drawable";
+import Pool from "canvas/pool";
 
 function Enemy() {
-  this.percentFire = .01;
-  this.chance = 0;
+  this.chanceToFire = .01;
   this.alive = false;
 
   this.spawn = (x, y, speed) => {
@@ -15,13 +15,19 @@ function Enemy() {
     this.speedX = 0;
     this.speedY = speed;
 
-    this.leftEdge = this.x - 90;
-    this.rightEdge = this.x + 90;
+    this.leftEdge = this.x - 20;
+    this.rightEdge = this.x;
     this.bottomEdge = this.y + 140;
   };
 
   this.draw = () => {
     this.element.context.clearRect(this.x - 1, this.y, this.width + 1, this.height);
+    this.move();
+    this.element.context.drawImage(this.image, this.x, this.y);
+    if (this.shouldFire()) this.fire();
+  };
+
+  this.move = () => {
     this.x += this.speedX;
     this.y += this.speedY;
 
@@ -35,14 +41,9 @@ function Enemy() {
       this.y -= 5;
       this.speedX = -this.speed;
     }
-
-    this.element.context.drawImage(this.image, this.x, this.y);
-
-    this.chance = Math.floor(Math.random() * 101);
-    if (this.chance / 100 < this.percentFire) {
-      this.fire();
-    }
   };
+
+  this.shouldFire = () => Math.floor(Math.random() * 1001) / 1000 < this.chanceToFire;
 
   this.fire = () => this.lasers.get(this.x + this.width / 2, this.y + this.height, -2.5);
 
@@ -57,4 +58,5 @@ function Enemy() {
 }
 
 Enemy.prototype = new Drawable();
+Enemy.prototype.lasers = new Pool(50);
 export default Enemy;
