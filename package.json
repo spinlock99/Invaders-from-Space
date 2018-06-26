@@ -1,5 +1,5 @@
 {
-  "version": "1.0.25",
+  "version": "1.0.26",
   "dependencies": {
     "dexie": "^2.0.0",
     "immutable": "^3.8.1",
