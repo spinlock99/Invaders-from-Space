@@ -12,10 +12,10 @@ function Ship() {
   this.nextY = null;
 
   this.draw = () => {
-    this.context.clearRect(this.x, this.y, this.width, this.height);
+    this.element.context.clearRect(this.x, this.y, this.width, this.height);
     this.x = this.nextX || this.x;
     this.y = this.nextY || this.y;
-    this.context.drawImage(this.image, this.x, this.y);
+    this.element.context.drawImage(this.image, this.x, this.y);
   }
 
   this.move = (x, y) => {

@@ -1,6 +1,7 @@
 import Drawable  from "canvas/drawable";
 
-function Laser() {
+function Laser(type) {
+  this.type = type;
   this.alive = false;
 
   this.clear = () => {
@@ -18,13 +19,17 @@ function Laser() {
   };
 
   this.draw = () => {
-    this.context.clearRect(this.x, this.y, this.width, this.height);
+    this.element.context.clearRect(this.x, this.y, this.width, this.height);
     this.y -= this.speed;
-    if (this.y <= 0 - this.height) {
-      return true;
+
+    if (this.type === "enemy") {
+      if (this.y >= this.element.height) return true;
     } else {
-      this.context.drawImage(this.image, this.x, this.y);
+      if (this.y <= 0 - this.height) return true;
     }
+
+    this.element.context.drawImage(this.image, this.x, this.y);
+    return false;
   };
 }
 

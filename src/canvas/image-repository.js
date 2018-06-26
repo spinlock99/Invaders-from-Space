@@ -12,4 +12,12 @@ export default function ImageRepository(onload) {
   this.laser = new Image();
   this.laser.src = require("laser.png");
   this.laser.onload = e => --this.imagesToLoad || onload();
+
+  this.enemyLaser = new Image();
+  this.enemyLaser.src = require("enemy-laser.png");
+  this.laser.onload = e => --this.imagesToLoad || onload();
+
+  this.enemy = new Image();
+  this.enemy.src = require("enemy.png");
+  this.enemy.onload = e => --this.imagesToLoad || onload();
 }
