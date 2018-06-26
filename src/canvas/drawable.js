@@ -14,5 +14,5 @@ export default function Drawable() {
 
   this.draw = () => {};
   this.move = () => {};
-  this.isCollidableWith = object => this.collidableWith === object.type
+  this.isCollidableWith = object => this.collidableWith === object.type;
 }

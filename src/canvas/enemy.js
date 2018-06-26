@@ -28,8 +28,10 @@ function Enemy() {
 
     if (this.isColliding) return true;
 
-    this.element.context.drawImage(this.image, this.x, this.y);
     if (this.shouldFire()) this.fire();
+
+    this.element.context.drawImage(this.image, this.x, this.y);
+    return false;
   };
 
   this.move = () => {

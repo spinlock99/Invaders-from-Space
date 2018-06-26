@@ -45,7 +45,7 @@ export default function Pool(size) {
 
   this.animate = () => {
     for (let i = 0; i < size; i++) {
-      if (!this.pool[i].alive) { break; }
+      if (!this.pool[i].alive) break;
 
       if (this.pool[i].draw()) {
         this.pool[i].clear();
@@ -54,14 +54,5 @@ export default function Pool(size) {
     }
   };
 
-  this.getPool = () =>
-    {
-      var obj = [];
-      for (var i = 0; i < size; i++) {
-        if (this.pool[i].alive) {
-          obj.push(this.pool[i]);
-        }
-      }
-      return obj;
-    };
+  this.getPool = () => this.pool.filter(object => object.alive);
 }
