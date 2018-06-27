@@ -9,6 +9,9 @@ function Ship() {
   this.nextX = null;
   this.nextY = null;
 
+  this.type = "ship";
+  this.collidableWith = "enemyLaser";
+
   this.draw = () =>
     {
       this.element.context.clearRect(this.x, this.y, this.width, this.height);
@@ -21,6 +24,9 @@ function Ship() {
     {
       this.nextX = x;
       this.nextY = y;
+
+      if (this.isColliding) return;
+
       this.draw();
     };
 
