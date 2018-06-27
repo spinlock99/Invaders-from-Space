@@ -3,31 +3,40 @@ import Drawable  from "canvas/drawable";
 function Laser() {
   this.alive = false;
 
-  this.clear = () => {
-    this.x = 0;
-    this.y = 0;
-    this.speed = 0;
-    this.alive = false;
-    this.isColliding = false;
-  };
+  this.clear = () =>
+    {
+      this.x = 0;
+      this.y = 0;
+      this.speed = 0;
+      this.alive = false;
+      this.isColliding = false;
+    };
 
-  this.spawn = (x, y, speed) => {
-    this.x = x;
-    this.y = y;
-    this.speed = speed;
-    this.alive = true;
-  };
+  this.spawn = (x, y, speed) =>
+    {
+      this.x = x;
+      this.y = y;
+      this.speed = speed;
+      this.alive = true;
+    };
 
-  this.draw = () => {
-    this.element.context.clearRect(this.x, this.y, this.width, this.height);
-    this.y -= this.speed;
+  this.draw = () =>
+    {
+      this.element.context.clearRect(
+        Math.floor(this.x),
+        Math.floor(this.y),
+        this.image.width + 1,
+        this.image.height + 1
+      );
 
-    if (this.isColliding) return true;
-    if (this.isOffPage()) return true;
+      this.y -= this.speed; // move
 
-    this.element.context.drawImage(this.image, this.x, this.y);
-    return false;
-  };
+      if (this.isColliding) return true;
+      if (this.isOffPage()) return true;
+
+      this.element.context.drawImage(this.image, this.x, this.y);
+      return false;
+    };
 
   this.isOffPage = () => this.y <= 0 - this.height;
 }
