@@ -5,6 +5,7 @@ function Ship() {
   this.lasers = new Pool(40);
   this.leftGunOffset = 5;
   this.rightGunOffset = 33;
+  this.thumbOffset = 60;
 
   this.nextX = null;
   this.nextY = null;
@@ -22,8 +23,8 @@ function Ship() {
 
   this.move = (x, y) =>
     {
-      this.nextX = x;
-      this.nextY = y;
+      this.nextX = x - this.image.width / 2;
+      this.nextY = y - this.thumbOffset;
 
       if (this.isColliding) return;
 
