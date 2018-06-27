@@ -10,6 +10,11 @@ initializeMaterialUI();
 document.body.addEventListener("touchstart", e => e.preventDefault(), { passive: false });
 document.body.addEventListener("touchmove", e => e.preventDefault(), { passive: false });
 
-render(<App />, document.getElementById("container"));
+const container = document.getElementById("container");
+const ratio = window.devicePixelRatio;
+const width = ratio * container.clientWidth;
+const height = ratio * container.clientHeight;
+
+render(<App width={width} height={height} ratio={ratio} />, container);
 
 if (module.hot) { module.hot.accept(); }

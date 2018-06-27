@@ -95,21 +95,27 @@ export class Game extends React.Component {
     {
       if (!element) return;
       this.quadTree = new QuadTree({ x: 0, y: 0, width: element.width, height: element.height });
-      Laser.prototype.element = this.extract(element);
-      Enemy.prototype.element = this.extract(element);
-      EnemyLaser.prototype.element = this.extract(element);
+      let psudoElement  = this.extract(element);
+      psudoElement.context.scale(this.props.ratio, this.props.ratio);
+      Laser.prototype.element = psudoElement;
+      Enemy.prototype.element = psudoElement;
+      EnemyLaser.prototype.element = psudoElement;
     };
 
   setBackground = element =>
     {
       if (!element) return;
-      Background.prototype.element = this.extract(element);
+      let psudoElement  = this.extract(element);
+      psudoElement.context.scale(this.props.ratio, this.props.ratio);
+      Background.prototype.element = psudoElement;
     };
 
   setShip = element =>
     {
       if (!element) return;
-      Ship.prototype.element = this.extract(element);
+      let psudoElement  = this.extract(element);
+      psudoElement.context.scale(this.props.ratio, this.props.ratio);
+      Ship.prototype.element = psudoElement;
     };
 
   extract = element =>
@@ -117,6 +123,7 @@ export class Game extends React.Component {
       context: element.getContext("2d"),
       height: element.height,
       width: element.width,
+      ratio: this.props.ratio,
     });
 
   move = event => this.ship.move(event.touches[0].pageX, event.touches[0].pageY);
@@ -124,20 +131,20 @@ export class Game extends React.Component {
   render() {
     return [
       <canvas key="background"
-              width="414"
-              height="736"
+              width={this.props.width}
+              height={this.props.height}
               style={{ ...styles.canvas, ...styles.bg }}
               ref={this.setBackground}
       />,
       <canvas key="main"
-              width="414"
-              height="736"
+              width={this.props.width}
+              height={this.props.height}
               style={{ ...styles.canvas, ...styles.main }}
               ref={this.setMain}
       />,
       <canvas key="ship"
-              width="414"
-              height="736"
+              width={this.props.width}
+              height={this.props.height}
               style={{ ...styles.canvas, ...styles.ship }}
               ref={this.setShip}
               onTouchStart={this.move}

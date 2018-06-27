@@ -32,7 +32,10 @@ export class App extends Component {
     return(
       <Provider store={this.configureStore()}>
         <MuiThemeProvider>
-          {gameOn ? <Game /> : <InstallInstructions />}
+          {gameOn
+            ? <Game width={this.props.width} height={this.props.height} ratio={this.props.ratio} />
+            : <InstallInstructions />
+          }
         </MuiThemeProvider>
       </Provider>
     );
