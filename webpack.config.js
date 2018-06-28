@@ -21,7 +21,7 @@ module.exports = env =>
 
     resolve: {
       modules: [
-        path.resolve(__dirname, 'images'),
+        path.resolve(__dirname),
         path.resolve(__dirname, 'src'),
         'node_modules',
       ]
@@ -30,7 +30,7 @@ module.exports = env =>
     module: {
       loaders: [
         {
-          test: /\.(png|jpg|gif)$/,
+          test: /\.(png|jpg|gif|mp3)$/,
           loader: "file-loader"
         },
         {
