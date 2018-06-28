@@ -60,6 +60,8 @@ export class Game extends React.Component {
 
       window.requestAnimationFrame(this.animate);
 
+      if (this.ship.isColliding) this.gameOver();
+
       this.background.draw();
       this.ship.lasers.animate();
       this.enemies.animate();
@@ -140,6 +142,12 @@ export class Game extends React.Component {
     });
 
   move = event => this.ship.move(event.touches[0].pageX, event.touches[0].pageY);
+
+  gameOver = () =>
+    {
+      this.backgroundAudio.pause();
+      this.gameOverAudio.play();
+    }
 
   render() {
     return [
