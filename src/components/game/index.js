@@ -34,6 +34,7 @@ export class Game extends React.Component {
 
       // the enemy laser pool is shared by all enemies so we put it on the prototype.
       Enemy.prototype.lasers.init("enemyLaser", this.images.enemyLaser);
+      Drawable.prototype.store = this.context.store;
 
       this.animate();
       setTimeout(() => this.ship.draw(), 200);
