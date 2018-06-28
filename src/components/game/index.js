@@ -1,12 +1,15 @@
-import React from "react";
 import Background from "canvas/background";
-import Ship from "canvas/ship";
-import ImageRepository from "canvas/image-repository";
-import Laser from "canvas/laser";
+import Drawable from "canvas/drawable";
 import Enemy from "canvas/enemy";
 import EnemyLaser from "canvas/enemy-laser";
+import ImageRepository from "canvas/image-repository";
+import Score from "components/score";
+import Laser from "canvas/laser";
 import Pool from "canvas/pool";
+import PropTypes from "prop-types";
 import QuadTree from "canvas/quad-tree";
+import React from "react";
+import Ship from "canvas/ship";
 import styles from "./styles";
 
 export class Game extends React.Component {
@@ -17,21 +20,43 @@ export class Game extends React.Component {
     this.images = new ImageRepository(this.init);
   }
 
-  animate = () => {
-    this.quadTree.clear();
-    this.quadTree.insert(this.ship);
-    this.quadTree.insert(Enemy.prototype.lasers.getPool());
-    this.quadTree.insert(this.ship.lasers.getPool());
-    this.quadTree.insert(this.enemies.getPool());
-    this.detectCollision();
+  init = () =>
+    {
+      this.background = new Background();
+      this.background.init(0, 0, this.images.background);
 
-    window.requestAnimationFrame(this.animate);
+      this.ship = new Ship();
+      this.ship.init(this.start.x, this.start.y, this.images.ship);
+      this.ship.lasers.init("laser", this.images.laser);
 
-    this.background.draw();
-    this.ship.lasers.animate();
-    this.enemies.animate();
-    Enemy.prototype.lasers.animate();
-  };
+      this.enemies = new Pool(30);
+      this.enemies.init("enemy", this.images.enemy);
+
+      // the enemy laser pool is shared by all enemies so we put it on the prototype.
+      Enemy.prototype.lasers.init("enemyLaser", this.images.enemyLaser);
+
+      this.animate();
+      setTimeout(() => this.ship.draw(), 200);
+      setTimeout(() => this.attack(), 200);
+      setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
+    };
+
+  animate = () =>
+    {
+      this.quadTree.clear();
+      this.quadTree.insert(this.ship);
+      this.quadTree.insert(Enemy.prototype.lasers.getPool());
+      this.quadTree.insert(this.ship.lasers.getPool());
+      this.quadTree.insert(this.enemies.getPool());
+      this.detectCollision();
+
+      window.requestAnimationFrame(this.animate);
+
+      this.background.draw();
+      this.ship.lasers.animate();
+      this.enemies.animate();
+      Enemy.prototype.lasers.animate();
+    };
 
   detectCollision = () =>
     {
@@ -56,26 +81,6 @@ export class Game extends React.Component {
         }
       }
     };
-
-  init = () => {
-    this.background = new Background();
-    this.background.init(0, 0, this.images.background);
-
-    this.ship = new Ship();
-    this.ship.init(this.start.x, this.start.y, this.images.ship);
-    this.ship.lasers.init("laser", this.images.laser);
-
-    this.enemies = new Pool(30);
-    this.enemies.init("enemy", this.images.enemy);
-
-    // the enemy laser pool is shared by all enemies so we put it on the prototype.
-    Enemy.prototype.lasers.init("enemyLaser", this.images.enemyLaser);
-
-    this.animate();
-    setTimeout(() => this.ship.draw(), 200);
-    setTimeout(() => this.attack(), 200);
-    setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
-  };
 
   attack = () => {
     let x = 20;
@@ -150,6 +155,11 @@ export class Game extends React.Component {
               onTouchStart={this.move}
               onTouchMove={this.move}
       />,
+      <Score key="score" />,
     ];
   }
 };
+
+Game.contextTypes = {
+  store: PropTypes.object.isRequired,
+}
