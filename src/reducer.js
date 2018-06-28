@@ -1,22 +1,12 @@
-import { List, Map } from "immutable";
+import Immutable from "immutable";
 
-const init = List([]);
+const init = Immutable.fromJS({ score: 0 });
 
-export default function(todos=init, action) {
+export default function(state=init, action) {
   switch(action.type) {
-    case "ADD_TODO":
-      return todos.push(Map(action.payload));
-    case "TOGGLE_TODO":
-      return todos.map(todo => {
-        if(todo.get("id") === action.payload) {
-          return todo.update("isDone", isDone => !isDone);
-        } else {
-          return todo;
-        }
-      });
-    case "CLEAR_TODOS":
-      return todos.filterNot(todo => todo.get("isDone"));
+    case "ENEMY_DESTROYED":
+      return state.set('score', state.get('score') + 10);
     default:
-      return todos;
+      return state;
   }
 }

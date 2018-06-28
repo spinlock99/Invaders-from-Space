@@ -28,7 +28,10 @@ function Enemy() {
       this.element.context.clearRect(Math.floor(this.x), Math.floor(this.y), this.image.width + 1, this.image.height + 1);
       this.move();
 
-      if (this.isColliding) return true;
+      if (this.isColliding) {
+        this.store.dispatch({ type: "ENEMY_DESTROYED" });
+        return true;
+      }
 
       if (this.shouldFire()) this.fire();
 

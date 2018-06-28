@@ -18,7 +18,7 @@ export class App extends Component {
 
     if (module.hot) {
       module.hot.accept("reducer", () => {
-        const nextRootReducer = require("reducer");
+        const nextRootReducer = require("reducer").default;
         store.replaceReducer(nextRootReducer);
       });
     }
