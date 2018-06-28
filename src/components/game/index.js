@@ -3,13 +3,14 @@ import Drawable from "canvas/drawable";
 import Enemy from "canvas/enemy";
 import EnemyLaser from "canvas/enemy-laser";
 import ImageRepository from "canvas/image-repository";
-import Score from "components/score";
 import Laser from "canvas/laser";
 import Pool from "canvas/pool";
 import PropTypes from "prop-types";
 import QuadTree from "canvas/quad-tree";
 import React from "react";
+import Score from "components/score";
 import Ship from "canvas/ship";
+import SoundPool from "canvas/sound-pool";
 import styles from "./styles";
 
 export class Game extends React.Component {
@@ -18,6 +19,12 @@ export class Game extends React.Component {
     this.quadTree = null;
     this.start = { x: 190, y: 700 };
     this.images = new ImageRepository(this.init);
+    this.gameOverAudio = new Audio(require("audio/game-over.mp3"));
+    this.backgroundAudio = new Audio(require("audio/kick-shock.mp3"));
+    this.backgroundAudio.loop = true;
+    this.backgroundAudio.volume = .25;
+    this.backgroundAudio.load();
+    this.backgroundAudio.play();
   }
 
   init = () =>
