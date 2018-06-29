@@ -29,11 +29,3 @@ export default function SoundPool(size) {
       this.currSound = (this.currSound + 1) % size;
     };
 }
-
-function checkReadyState() {
-  if (game.gameOverAudio.readyState === 4 && game.backgroundAudio.readyState === 4) {
-    window.clearInterval(game.checkAudio);
-    game.start();
-  }
-}
-

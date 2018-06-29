@@ -28,6 +28,7 @@ function Ship() {
 
       if (this.isColliding) return;
 
+      this.pewPews.get();
       this.draw();
     };
 
@@ -35,7 +36,6 @@ function Ship() {
     {
       if (this.isColliding) return;
       this.lasers.getTwo(this.x + this.leftGunOffset, this.x + this.rightGunOffset, this.y, 3);
-      this.pewPews.get();
     }
 }
 
