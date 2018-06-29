@@ -26,7 +26,6 @@ export class Game extends React.Component {
     this.backgroundAudio.loop = true;
     this.backgroundAudio.volume = .25;
     this.backgroundAudio.load();
-    this.backgroundAudio.play();
   }
 
   init = () =>
@@ -48,11 +47,23 @@ export class Game extends React.Component {
       Drawable.prototype.store = this.context.store;
       Drawable.prototype.explosions = this.explosions;
 
-      this.animate();
+      this.background.draw();
       setTimeout(() => this.ship.draw(), 200);
-      setTimeout(() => this.attack(), 200);
-      setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
     };
+
+  checkReadyState = () =>
+    {
+      if (this.audioLoaded()) {
+        this.animate();
+
+        setTimeout(() => this.attack(), 200);
+        setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
+      } else {
+        setTimeout(() => this.checkReadyState(), 1000);
+      }
+    };
+
+  audioLoaded = () => (this.gameOverAudio.readyState === 4 && this.backgroundAudio.readyState === 4);
 
   animate = () =>
     {
@@ -173,7 +184,7 @@ export class Game extends React.Component {
               height={this.props.height}
               style={{ ...styles.canvas, ...styles.ship }}
               ref={this.setShip}
-              onTouchStart={this.move}
+              onTouchStart={() => { this.backgroundAudio.play(); this.checkReadyState(); }}
               onTouchMove={this.move}
       />,
       <Score key="score" />,
