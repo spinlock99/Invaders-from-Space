@@ -31,7 +31,12 @@ function Ship() {
       this.draw();
     };
 
-  this.fire = () => this.lasers.getTwo(this.x + this.leftGunOffset, this.x + this.rightGunOffset, this.y, 3);
+  this.fire = () =>
+    {
+      if (this.isColliding) return;
+      this.lasers.getTwo(this.x + this.leftGunOffset, this.x + this.rightGunOffset, this.y, 3);
+      this.pewPews.get();
+    }
 }
 
 Ship.prototype = new Drawable();

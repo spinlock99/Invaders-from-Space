@@ -3,13 +3,14 @@ import Drawable from "canvas/drawable";
 import Enemy from "canvas/enemy";
 import EnemyLaser from "canvas/enemy-laser";
 import ImageRepository from "canvas/image-repository";
-import Score from "components/score";
 import Laser from "canvas/laser";
 import Pool from "canvas/pool";
 import PropTypes from "prop-types";
 import QuadTree from "canvas/quad-tree";
 import React from "react";
+import Score from "components/score";
 import Ship from "canvas/ship";
+import SoundPool from "canvas/sound-pool";
 import styles from "./styles";
 
 export class Game extends React.Component {
@@ -18,6 +19,14 @@ export class Game extends React.Component {
     this.quadTree = null;
     this.start = { x: 190, y: 700 };
     this.images = new ImageRepository(this.init);
+    this.explosions = new SoundPool(20);
+    this.explosions.init("explosion");
+    this.gameOverAudio = new Audio(require("audio/game-over.mp3"));
+    this.backgroundAudio = new Audio(require("audio/kick-shock.mp3"));
+    this.backgroundAudio.loop = true;
+    this.backgroundAudio.volume = .25;
+    this.backgroundAudio.load();
+    this.backgroundAudio.play();
   }
 
   init = () =>
@@ -28,6 +37,8 @@ export class Game extends React.Component {
       this.ship = new Ship();
       this.ship.init(this.start.x, this.start.y, this.images.ship);
       this.ship.lasers.init("laser", this.images.laser);
+      this.ship.pewPews = new SoundPool(10);
+      this.ship.pewPews.init("laser");
 
       this.enemies = new Pool(30);
       this.enemies.init("enemy", this.images.enemy);
@@ -35,6 +46,7 @@ export class Game extends React.Component {
       // the enemy laser pool is shared by all enemies so we put it on the prototype.
       Enemy.prototype.lasers.init("enemyLaser", this.images.enemyLaser);
       Drawable.prototype.store = this.context.store;
+      Drawable.prototype.explosions = this.explosions;
 
       this.animate();
       setTimeout(() => this.ship.draw(), 200);
@@ -52,6 +64,8 @@ export class Game extends React.Component {
       this.detectCollision();
 
       window.requestAnimationFrame(this.animate);
+
+      if (this.ship.isColliding) this.gameOver();
 
       this.background.draw();
       this.ship.lasers.animate();
@@ -133,6 +147,12 @@ export class Game extends React.Component {
     });
 
   move = event => this.ship.move(event.touches[0].pageX, event.touches[0].pageY);
+
+  gameOver = () =>
+    {
+      this.backgroundAudio.pause();
+      this.gameOverAudio.play();
+    }
 
   render() {
     return [
