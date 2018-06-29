@@ -53,7 +53,11 @@ export class Game extends React.Component {
 
   checkReadyState = () =>
     {
+      if (this.alreadyStarted) return;
+
       if (this.audioLoaded()) {
+        this.alreadyStarted = true;
+        this.backgroundAudio.play();
         this.animate();
 
         setTimeout(() => this.attack(), 200);
@@ -184,7 +188,7 @@ export class Game extends React.Component {
               height={this.props.height}
               style={{ ...styles.canvas, ...styles.ship }}
               ref={this.setShip}
-              onTouchStart={() => { this.backgroundAudio.play(); this.checkReadyState(); }}
+              onTouchStart={this.checkReadyState}
               onTouchMove={this.move}
       />,
       <Score key="score" />,
