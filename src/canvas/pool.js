@@ -30,6 +30,11 @@ export default function Pool(size) {
       }
     };
 
+  this.reset = () =>
+    {
+      this.pool.forEach(element => element.clear());
+    };
+
   this.animate = () =>
     {
       for (let i = 0; i < size; i++) {
@@ -58,5 +63,5 @@ export default function Pool(size) {
       }
     };
 
-    this.getPool = () => this.pool.filter(object => object.alive);
+  this.getPool = () => this.pool.filter(object => object.alive);
 }

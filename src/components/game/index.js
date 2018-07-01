@@ -2,30 +2,25 @@ import Background from "canvas/background";
 import Drawable from "canvas/drawable";
 import Enemy from "canvas/enemy";
 import EnemyLaser from "canvas/enemy-laser";
+import GameOver from "components/game-over";
 import ImageRepository from "canvas/image-repository";
 import Laser from "canvas/laser";
 import Pool from "canvas/pool";
 import PropTypes from "prop-types";
 import QuadTree from "canvas/quad-tree";
 import React from "react";
+import Restart from "components/restart";
 import Score from "components/score";
 import Ship from "canvas/ship";
-import SoundPool from "canvas/sound-pool";
 import styles from "./styles";
 
 export class Game extends React.Component {
   constructor(props) {
     super(props);
     this.quadTree = null;
-    this.start = { x: 190, y: 700 };
+    this.elements = { background: null, ship: null, main: null };
+    this.shipStart = { x: 190, y: 700 };
     this.images = new ImageRepository(this.init);
-    this.explosions = new SoundPool(20);
-    this.explosions.init("explosion");
-    this.gameOverAudio = new Audio(require("audio/game-over.mp3"));
-    this.backgroundAudio = new Audio(require("audio/kick-shock.mp3"));
-    this.backgroundAudio.loop = true;
-    this.backgroundAudio.volume = .25;
-    this.backgroundAudio.load();
   }
 
   init = () =>
@@ -34,10 +29,8 @@ export class Game extends React.Component {
       this.background.init(0, 0, this.images.background);
 
       this.ship = new Ship();
-      this.ship.init(this.start.x, this.start.y, this.images.ship);
+      this.ship.init(this.shipStart.x, this.shipStart.y, this.images.ship);
       this.ship.lasers.init("laser", this.images.laser);
-      this.ship.pewPews = new SoundPool(10);
-      this.ship.pewPews.init("laser");
 
       this.enemies = new Pool(30);
       this.enemies.init("enemy", this.images.enemy);
@@ -45,7 +38,6 @@ export class Game extends React.Component {
       // the enemy laser pool is shared by all enemies so we put it on the prototype.
       Enemy.prototype.lasers.init("enemyLaser", this.images.enemyLaser);
       Drawable.prototype.store = this.context.store;
-      Drawable.prototype.explosions = this.explosions;
 
       this.background.draw();
       setTimeout(() => this.ship.draw(), 200);
@@ -55,19 +47,41 @@ export class Game extends React.Component {
     {
       if (this.alreadyStarted) return;
 
-      if (this.audioLoaded()) {
-        this.alreadyStarted = true;
-        this.backgroundAudio.play();
-        this.animate();
-
-        setTimeout(() => this.attack(), 200);
-        setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
-      } else {
+      if (this.images.imagesToLoad) {
         setTimeout(() => this.checkReadyState(), 1000);
+      } else {
+        this.start();
       }
     };
 
-  audioLoaded = () => (this.gameOverAudio.readyState === 4 && this.backgroundAudio.readyState === 4);
+  start = () =>
+    {
+      this.alreadyStarted = true;
+      this.animate();
+
+      setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
+    };
+
+  restart = () =>
+    {
+      for (const key in this.elements) {
+        this.elements[key].context.clearRect(0,0,this.elements[key].width, this.elements[key].height);
+      }
+      this.quadTree.clear();
+      this.background.init(0, 0, this.images.background);
+      this.ship.init(this.shipStart.x, this.shipStart.y, this.images.ship);
+      this.enemies.init("enemy", this.images.enemy);
+      Enemy.prototype.lasers.init("enemyLaser", this.images.enemyLaser);
+      this.ship.lasers.init("laser", this.images.laser);
+
+      this.ship.isColliding = false;
+      this.ship.move(this.shipStart.x, this.shipStart.y);
+      this.ship.lasers.reset();
+
+      this.background.draw();
+      this.ship.draw();
+      this.start();
+    };
 
   animate = () =>
     {
@@ -78,14 +92,19 @@ export class Game extends React.Component {
       this.quadTree.insert(this.enemies.getPool());
       this.detectCollision();
 
-      window.requestAnimationFrame(this.animate);
+      if (this.ship.isColliding) {
+        this.gameOver();
+        this.quadTree.clear();
+      } else {
+        this.background.draw();
+        this.ship.lasers.animate();
+        this.enemies.animate();
+        Enemy.prototype.lasers.animate();
 
-      if (this.ship.isColliding) this.gameOver();
+        if (this.enemies.getPool().length === 0) this.attack();
 
-      this.background.draw();
-      this.ship.lasers.animate();
-      this.enemies.animate();
-      Enemy.prototype.lasers.animate();
+        window.requestAnimationFrame(this.animate);
+      }
     };
 
   detectCollision = () =>
@@ -132,6 +151,7 @@ export class Game extends React.Component {
       this.quadTree = new QuadTree({ x: 0, y: 0, width: element.width, height: element.height });
       let psudoElement  = this.extract(element);
       psudoElement.context.scale(this.props.ratio, this.props.ratio);
+      this.elements.main = psudoElement;
       Laser.prototype.element = psudoElement;
       Enemy.prototype.element = psudoElement;
       EnemyLaser.prototype.element = psudoElement;
@@ -141,6 +161,7 @@ export class Game extends React.Component {
     {
       if (!element) return;
       let psudoElement  = this.extract(element);
+      this.elements.background = psudoElement;
       psudoElement.context.scale(this.props.ratio, this.props.ratio);
       Background.prototype.element = psudoElement;
     };
@@ -149,6 +170,7 @@ export class Game extends React.Component {
     {
       if (!element) return;
       let psudoElement  = this.extract(element);
+      this.elements.ship = psudoElement;
       psudoElement.context.scale(this.props.ratio, this.props.ratio);
       Ship.prototype.element = psudoElement;
     };
@@ -165,8 +187,7 @@ export class Game extends React.Component {
 
   gameOver = () =>
     {
-      this.backgroundAudio.pause();
-      this.gameOverAudio.play();
+      this.context.store.dispatch({ type: "GAME_OVER" });
     }
 
   render() {
@@ -192,6 +213,8 @@ export class Game extends React.Component {
               onTouchMove={this.move}
       />,
       <Score key="score" />,
+      <GameOver key="game-over" />,
+      <Restart key="restart" onTouchStart={this.restart} />,
     ];
   }
 };

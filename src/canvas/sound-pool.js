@@ -28,4 +28,7 @@ export default function SoundPool(size) {
       }
       this.currSound = (this.currSound + 1) % size;
     };
+
+  this.readyState = () => this.pool.reduce((accumulator, currSound) => (currSound.readyState === 4) && accumulator, true)
+
 }

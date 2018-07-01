@@ -30,7 +30,6 @@ function Enemy() {
 
       if (this.isColliding) {
         this.store.dispatch({ type: "ENEMY_DESTROYED" });
-        this.explosions.get();
         return true;
       }
 

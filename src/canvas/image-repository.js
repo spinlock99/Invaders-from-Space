@@ -1,5 +1,5 @@
 export default function ImageRepository(onload) {
-  this.imagesToLoad = 3;
+  this.imagesToLoad = 4;
 
   this.background = new Image();
   this.background.src = require("images/background.png");
