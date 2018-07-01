@@ -8,6 +8,8 @@ export default function(state=init, action) {
       return state.set('score', state.get('score') + 10);
     case "GAME_OVER":
       return state.set("gameOver", true);
+    case "RESTART":
+      return state.merge({ "score": 0, "gameOver": false });
     default:
       return state;
   }

@@ -9,6 +9,7 @@ import Pool from "canvas/pool";
 import PropTypes from "prop-types";
 import QuadTree from "canvas/quad-tree";
 import React from "react";
+import Restart from "components/restart";
 import Score from "components/score";
 import Ship from "canvas/ship";
 import styles from "./styles";
@@ -17,6 +18,7 @@ export class Game extends React.Component {
   constructor(props) {
     super(props);
     this.quadTree = null;
+    this.elements = { background: null, ship: null, main: null };
     this.shipStart = { x: 190, y: 700 };
     this.images = new ImageRepository(this.init);
   }
@@ -36,7 +38,6 @@ export class Game extends React.Component {
       // the enemy laser pool is shared by all enemies so we put it on the prototype.
       Enemy.prototype.lasers.init("enemyLaser", this.images.enemyLaser);
       Drawable.prototype.store = this.context.store;
-      //Drawable.prototype.explosions = this.explosions;
 
       this.background.draw();
       setTimeout(() => this.ship.draw(), 200);
@@ -55,11 +56,33 @@ export class Game extends React.Component {
 
   start = () =>
     {
-        this.alreadyStarted = true;
-        this.animate();
+      this.alreadyStarted = true;
+      this.animate();
 
-        setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
+      setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
     };
+
+  restart = () =>
+    {
+      for (const key in this.elements) {
+        this.elements[key].context.clearRect(0,0,this.elements[key].width, this.elements[key].height);
+      }
+      this.quadTree.clear();
+      this.background.init(0, 0, this.images.background);
+      this.ship.init(this.shipStart.x, this.shipStart.y, this.images.ship);
+      this.enemies.init("enemy", this.images.enemy);
+      Enemy.prototype.lasers.init("enemyLaser", this.images.enemyLaser);
+      this.ship.lasers.init("laser", this.images.laser);
+
+      this.ship.isColliding = false;
+      this.ship.move(this.shipStart.x, this.shipStart.y);
+      this.ship.lasers.reset();
+
+      this.background.draw();
+      this.ship.draw();
+      this.start();
+    };
+
   animate = () =>
     {
       this.quadTree.clear();
@@ -69,16 +92,19 @@ export class Game extends React.Component {
       this.quadTree.insert(this.enemies.getPool());
       this.detectCollision();
 
-      if (this.ship.isColliding) this.gameOver();
+      if (this.ship.isColliding) {
+        this.gameOver();
+        this.quadTree.clear();
+      } else {
+        this.background.draw();
+        this.ship.lasers.animate();
+        this.enemies.animate();
+        Enemy.prototype.lasers.animate();
 
-      this.background.draw();
-      this.ship.lasers.animate();
-      this.enemies.animate();
-      Enemy.prototype.lasers.animate();
+        if (this.enemies.getPool().length === 0) this.attack();
 
-      if (this.enemies.getPool().length === 0) this.attack();
-
-      window.requestAnimationFrame(this.animate);
+        window.requestAnimationFrame(this.animate);
+      }
     };
 
   detectCollision = () =>
@@ -125,6 +151,7 @@ export class Game extends React.Component {
       this.quadTree = new QuadTree({ x: 0, y: 0, width: element.width, height: element.height });
       let psudoElement  = this.extract(element);
       psudoElement.context.scale(this.props.ratio, this.props.ratio);
+      this.elements.main = psudoElement;
       Laser.prototype.element = psudoElement;
       Enemy.prototype.element = psudoElement;
       EnemyLaser.prototype.element = psudoElement;
@@ -134,6 +161,7 @@ export class Game extends React.Component {
     {
       if (!element) return;
       let psudoElement  = this.extract(element);
+      this.elements.background = psudoElement;
       psudoElement.context.scale(this.props.ratio, this.props.ratio);
       Background.prototype.element = psudoElement;
     };
@@ -142,6 +170,7 @@ export class Game extends React.Component {
     {
       if (!element) return;
       let psudoElement  = this.extract(element);
+      this.elements.ship = psudoElement;
       psudoElement.context.scale(this.props.ratio, this.props.ratio);
       Ship.prototype.element = psudoElement;
     };
@@ -185,6 +214,7 @@ export class Game extends React.Component {
       />,
       <Score key="score" />,
       <GameOver key="game-over" />,
+      <Restart key="restart" onTouchStart={this.restart} />,
     ];
   }
 };
