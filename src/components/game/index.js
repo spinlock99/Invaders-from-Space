@@ -2,6 +2,7 @@ import Background from "canvas/background";
 import Drawable from "canvas/drawable";
 import Enemy from "canvas/enemy";
 import EnemyLaser from "canvas/enemy-laser";
+import GameOver from "components/game-over";
 import ImageRepository from "canvas/image-repository";
 import Laser from "canvas/laser";
 import Pool from "canvas/pool";
@@ -60,7 +61,6 @@ export class Game extends React.Component {
         this.backgroundAudio.play();
         this.animate();
 
-        setTimeout(() => this.attack(), 200);
         setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
       } else {
         setTimeout(() => this.checkReadyState(), 1000);
@@ -78,14 +78,16 @@ export class Game extends React.Component {
       this.quadTree.insert(this.enemies.getPool());
       this.detectCollision();
 
-      window.requestAnimationFrame(this.animate);
-
       if (this.ship.isColliding) this.gameOver();
 
       this.background.draw();
       this.ship.lasers.animate();
       this.enemies.animate();
       Enemy.prototype.lasers.animate();
+
+      if (this.enemies.getPool().length === 0) this.attack();
+
+      window.requestAnimationFrame(this.animate);
     };
 
   detectCollision = () =>
@@ -167,6 +169,7 @@ export class Game extends React.Component {
     {
       this.backgroundAudio.pause();
       this.gameOverAudio.play();
+      this.context.store.dispatch({ type: "GAME_OVER" });
     }
 
   render() {
@@ -192,6 +195,7 @@ export class Game extends React.Component {
               onTouchMove={this.move}
       />,
       <Score key="score" />,
+      <GameOver key="game-over" />,
     ];
   }
 };
