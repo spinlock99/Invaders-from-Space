@@ -28,7 +28,6 @@ function Ship() {
 
       if (this.isColliding) return;
 
-      this.pewPews.get();
       this.draw();
     };
 

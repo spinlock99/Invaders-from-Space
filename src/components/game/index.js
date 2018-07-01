@@ -11,22 +11,14 @@ import QuadTree from "canvas/quad-tree";
 import React from "react";
 import Score from "components/score";
 import Ship from "canvas/ship";
-import SoundPool from "canvas/sound-pool";
 import styles from "./styles";
 
 export class Game extends React.Component {
   constructor(props) {
     super(props);
     this.quadTree = null;
-    this.start = { x: 190, y: 700 };
+    this.shipStart = { x: 190, y: 700 };
     this.images = new ImageRepository(this.init);
-    this.explosions = new SoundPool(20);
-    this.explosions.init("explosion");
-    this.gameOverAudio = new Audio(require("audio/game-over.mp3"));
-    this.backgroundAudio = new Audio(require("audio/kick-shock.mp3"));
-    this.backgroundAudio.loop = true;
-    this.backgroundAudio.volume = .25;
-    this.backgroundAudio.load();
   }
 
   init = () =>
@@ -35,10 +27,8 @@ export class Game extends React.Component {
       this.background.init(0, 0, this.images.background);
 
       this.ship = new Ship();
-      this.ship.init(this.start.x, this.start.y, this.images.ship);
+      this.ship.init(this.shipStart.x, this.shipStart.y, this.images.ship);
       this.ship.lasers.init("laser", this.images.laser);
-      this.ship.pewPews = new SoundPool(10);
-      this.ship.pewPews.init("laser");
 
       this.enemies = new Pool(30);
       this.enemies.init("enemy", this.images.enemy);
@@ -46,7 +36,7 @@ export class Game extends React.Component {
       // the enemy laser pool is shared by all enemies so we put it on the prototype.
       Enemy.prototype.lasers.init("enemyLaser", this.images.enemyLaser);
       Drawable.prototype.store = this.context.store;
-      Drawable.prototype.explosions = this.explosions;
+      //Drawable.prototype.explosions = this.explosions;
 
       this.background.draw();
       setTimeout(() => this.ship.draw(), 200);
@@ -56,19 +46,20 @@ export class Game extends React.Component {
     {
       if (this.alreadyStarted) return;
 
-      if (this.audioLoaded()) {
-        this.alreadyStarted = true;
-        this.backgroundAudio.play();
-        this.animate();
-
-        setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
-      } else {
+      if (this.images.imagesToLoad) {
         setTimeout(() => this.checkReadyState(), 1000);
+      } else {
+        this.start();
       }
     };
 
-  audioLoaded = () => (this.gameOverAudio.readyState === 4 && this.backgroundAudio.readyState === 4);
+  start = () =>
+    {
+        this.alreadyStarted = true;
+        this.animate();
 
+        setInterval(() => this.ship.fire(this.ship.x, this.ship.y), 200);
+    };
   animate = () =>
     {
       this.quadTree.clear();
@@ -167,8 +158,6 @@ export class Game extends React.Component {
 
   gameOver = () =>
     {
-      this.backgroundAudio.pause();
-      this.gameOverAudio.play();
       this.context.store.dispatch({ type: "GAME_OVER" });
     }
 
