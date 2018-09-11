@@ -1,16 +1,16 @@
 CACHE MANIFEST
-#ver:2018-9-11 15:41:32
+#ver:2018-9-11 16:28:15
 #plugin:4.9.1
 
 CACHE:
-/invaders-from-space/c79950fc321ead9b0ad00eeffe22b4bf.png
-/invaders-from-space/d8e96b39170ba791218606421cb0c40b.png
-/invaders-from-space/046c333c61c4b53d03929ebff7252748.png
-/invaders-from-space/ed1c710f94eb0a34aceca28dff04b332.png
-/invaders-from-space/f9fb16be39b0ecb85e25975c6928c553.png
-/invaders-from-space/bundle.js
-/invaders-from-space/
-/invaders-from-space/manifest.json
+/space-force/c79950fc321ead9b0ad00eeffe22b4bf.png
+/space-force/d8e96b39170ba791218606421cb0c40b.png
+/space-force/046c333c61c4b53d03929ebff7252748.png
+/space-force/ed1c710f94eb0a34aceca28dff04b332.png
+/space-force/f9fb16be39b0ecb85e25975c6928c553.png
+/space-force/bundle.js
+/space-force/
+/space-force/manifest.json
 
 NETWORK:
 *
