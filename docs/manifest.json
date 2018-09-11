@@ -8,7 +8,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "/invaders-from-space/?utm_source=homescreen",
+  "start_url": "/space-force/?utm_source=homescreen",
   "background_color": "#000",
   "theme_color": "#536878",
   "display": "standalone"

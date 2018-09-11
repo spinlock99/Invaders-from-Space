@@ -16,7 +16,7 @@ module.exports = env =>
     output: {
       path: env === "prod" ? path.join(__dirname, "docs") : __dirname,
       filename: "bundle.js",
-      publicPath: env === "prod" ? "/invaders-from-space/" : "/",
+      publicPath: env === "prod" ? "/space-force/" : "/",
     },
 
     resolve: {
