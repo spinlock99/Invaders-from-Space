@@ -1,11 +1,12 @@
 import React from "react";
 import { render } from "react-dom";
 import { App } from "./src/app";
-import { initializeMaterialUI, initializeServiceWorker } from "./src/initializers";
+import { initializeMaterialUI, initializeAnalytics } from "./src/initializers";
 import OfflinePluginRuntime from "offline-plugin/runtime";
 
 OfflinePluginRuntime.install();
 initializeMaterialUI();
+initializeAnalytics();
 
 document.body.addEventListener("touchstart", e => e.preventDefault(), { passive: false });
 document.body.addEventListener("touchmove", e => e.preventDefault(), { passive: false });

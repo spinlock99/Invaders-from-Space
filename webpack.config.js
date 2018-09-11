@@ -50,6 +50,9 @@ module.exports = env =>
         title: "invaders from space",
         template: "src/index.ejs"
       }),
+      new webpack.DefinePlugin({
+        VERSION: JSON.stringify(require("./package.json").version)
+      }),
     ].concat(env === "prod" ? [
       new webpack.DefinePlugin({
         "process.env": { NODE_ENV: JSON.stringify("production") }
