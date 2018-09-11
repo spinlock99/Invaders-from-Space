@@ -3,6 +3,7 @@ import Drawable from "canvas/drawable";
 import Enemy from "canvas/enemy";
 import EnemyLaser from "canvas/enemy-laser";
 import GameOver from "components/game-over";
+import GameStart from "components/game-start";
 import ImageRepository from "canvas/image-repository";
 import Laser from "canvas/laser";
 import Pool from "canvas/pool";
@@ -56,6 +57,7 @@ export class Game extends React.Component {
 
   start = () =>
     {
+      this.gameStart();
       this.alreadyStarted = true;
       this.animate();
 
@@ -190,6 +192,11 @@ export class Game extends React.Component {
       this.context.store.dispatch({ type: "GAME_OVER" });
     }
 
+  gameStart = () =>
+    {
+      this.context.store.dispatch({ type: "GAME_START" });
+    }
+
   render() {
     return [
       <canvas key="background"
@@ -214,6 +221,7 @@ export class Game extends React.Component {
       />,
       <Score key="score" />,
       <GameOver key="game-over" />,
+      <GameStart key="game-start" />,
       <Restart key="restart" onTouchStart={this.restart} />,
     ];
   }
