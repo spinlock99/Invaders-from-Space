@@ -30,7 +30,6 @@ const trackError = (error, fieldsObj = {}) => {
 };
 
 const trackErrors = () => {
-  console.log('trackErrors');
   const loadErrorEvents = window.__e && window.__e.q || [];
   const fieldsObj = {eventAction: 'uncaught error'};
 
@@ -83,7 +82,7 @@ const sendNavigationTimingMetrics = () => {
 export const initializeAnalytics = () =>
   {
     window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};
-    ga('create', `${process.env.GOOGLE_ANALYTICS}`, 'auto');
+    ga('create', 'UA-98851522-8', 'auto');
     ga('set', 'transport', 'beacon');
     ga('set', dimensions.TRACKING_VERSION, TRACKING_VERSION);
     ga('set', dimensions.WINDOW_ID, uuid());
@@ -97,10 +96,8 @@ export const initializeAnalytics = () =>
 
     ga(tracker =>
       {
-        console.log('clientId');
         var clientId = tracker.get('clientId');
         tracker.set(dimensions.CLIENT_ID, clientId);
-        console.log('buildHitTask');
         const originalBuildHitTask = tracker.get('buildHitTask');
         tracker.set('buildHitTask', model =>
           {
