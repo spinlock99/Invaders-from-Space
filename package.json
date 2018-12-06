@@ -39,7 +39,7 @@
     "v": "node -v",
     "which": "which node",
     "dev-server": "node dev-server.js",
-    "start": "yarn dev-server",
+    "start": ". .env; yarn dev-server",
     "build": "webpack --env=prod --progress --profile --colors",
     "predeploy": "yarn build",
     "deploy": "git add .; yarn version --new-version patch; git push"
