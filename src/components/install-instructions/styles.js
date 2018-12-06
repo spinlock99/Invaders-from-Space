@@ -27,10 +27,13 @@ export default {
     width: "25px",
   },
   flexColumn: {
+    backgroundColor: "rgb(37, 55, 72)",
     display: "flex",
     flexDirection: "column",
-    minHeight: "80vh",
-    width: "95vw",
+    minHeight: "100vh",
+    paddingLeft: "25px",
+    paddingRight: "25px",
+    flexBasis: "100%",
   },
   header: {
     color: "#b7d0e8",
