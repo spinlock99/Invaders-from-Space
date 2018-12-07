@@ -1,6 +1,6 @@
 {
   "license": "MIT",
-  "version": "1.0.45",
+  "version": "1.0.46",
   "dependencies": {
     "dexie": "^2.0.0",
     "immutable": "^3.8.1",
