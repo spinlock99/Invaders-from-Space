@@ -2,10 +2,10 @@
   "license": "MIT",
   "version": "1.0.47",
   "dependencies": {
-    "dexie": "^2.0.0",
-    "immutable": "^3.8.1",
     "@material-ui/core": "^3.9.0",
     "@material-ui/icons": "^3.0.2",
+    "dexie": "^2.0.0",
+    "immutable": "^3.8.1",
     "offline-plugin": "^4.7.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
