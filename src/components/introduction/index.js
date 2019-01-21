@@ -1,6 +1,8 @@
 import React from "react"
-import styles from "./styles"
+import { connect } from "react-redux";
 import Button from '@material-ui/core/Button';
+
+import styles from "./styles";
 
 const slides = [
   {
@@ -13,10 +15,12 @@ const slides = [
   }
 ]
 
-const Introduction = props =>
+
+
+const Introduction = ({ showIntro, startIntro }) =>
   <div style={styles.background}>
-    <div style={styles.btnContainer}>
-      <StartIntro />
+    <div style={showIntro ? styles.hide : styles.btnContainer}>
+      <IntroButton startIntro={startIntro} />
     </div>
 
     <div style={styles.slides}>
@@ -26,8 +30,8 @@ const Introduction = props =>
     </div>
   </div>
 
-const StartIntro = () =>
-  <Button variant="contained" size="large">
+const IntroButton = ({ startIntro }) =>
+  <Button variant="contained" size="large" onTouchStart={startIntro}>
     Play Intro
   </Button>
 
@@ -44,5 +48,7 @@ const Slide = ({ img, text }) =>
     </div>
   </div>
 
-export default Introduction
-
+export default connect(
+  state => ({ showIntro: state.get('showIntro') }),
+  dispatch => ({ startIntro: event => dispatch({ type: "SHOW_INTRO" }) })
+)(Introduction);

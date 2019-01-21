@@ -8,8 +8,7 @@ export default {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    height: "100%",
-    display: "none"
+    height: "100%"
   },
   slides: {
     color: "#fff",
@@ -27,5 +26,8 @@ export default {
     fontSize: "14px",
     margin: "15px",
     maxHeight: "50vh"
+  },
+  hide: {
+    display: "none"
   }
 }
