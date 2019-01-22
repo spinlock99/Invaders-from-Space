@@ -10,7 +10,7 @@ export default {
     alignItems: "center",
     height: "100%"
   },
-  slides: {
+  slide: {
     color: "#fff",
   },
   sceneContainer: {
@@ -19,15 +19,26 @@ export default {
   },
   scene: {
     width: "90%",
-    padding: "15px",
-    boxSizing: "border-box"
+    paddingTop: "15px",
+    boxSizing: "border-box",
+    maxHeight: "50vh"
   },
   text: {
     fontSize: "14px",
     margin: "15px",
-    maxHeight: "50vh"
+    height: "30vh",
+    lineHeight: "20px"
   },
-  hide: {
-    display: "none"
+  nav: {
+    fontSize: "36px",
+    margin: "15px"
+  },
+  prev: {
+    display: "block",
+    float: "left"
+  },
+  next: {
+    display: "block",
+    float: "right"
   }
 }

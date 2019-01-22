@@ -1,33 +1,22 @@
 import React from "react"
 import { connect } from "react-redux";
 import Button from '@material-ui/core/Button';
+import slides from "./slides";
 
 import styles from "./styles";
 
-const slides = [
-  {
-    num: 1,
-    img: "https://i.imgur.com/78KHHjw.jpg",
-    text: [
-      "President Trump has won reelection and surprised the nation with the choice of a surprise running mate: Barack Obama.",
-      "The two meet in the Oval Office to discuss the threat that brought them together."
-    ]
-  }
-]
-
-
-
-const Introduction = ({ showIntro, startIntro }) =>
+const Introduction = ({ introSlide, nextSlide, prevSlide }) =>
   <div style={styles.background}>
-    <div style={showIntro ? styles.hide : styles.btnContainer}>
-      <IntroButton startIntro={startIntro} />
-    </div>
-
-    <div style={styles.slides}>
-      {slides.map(slide => (
-        <Slide key={slide.num} {...slide} />
-      ))}
-    </div>
+    {introSlide == 0 ?
+      <div style={styles.btnContainer}>
+        <IntroButton startIntro={nextSlide} />
+        {introSlide}
+      </div>
+      :
+      <div style={styles.slide}>
+        <Slide {...slides[introSlide - 1]} introSlide={introSlide} nextSlide={nextSlide} prevSlide={prevSlide} />
+      </div>
+    }
   </div>
 
 const IntroButton = ({ startIntro }) =>
@@ -35,20 +24,39 @@ const IntroButton = ({ startIntro }) =>
     Play Intro
   </Button>
 
-const Slide = ({ img, text }) =>
+const Slide = ({ img, text, introSlide, nextSlide, prevSlide }) =>
   <div>
-    <div style={styles.sceneContainer}>
-      <img src={img} style={styles.scene} />
+    <div>
+      <div style={styles.sceneContainer}>
+        <img src={img} style={styles.scene} />
+      </div>
+
+      <div className="sceneText" style={styles.text}>
+        {text.map((t, i) => (
+          <p key={i}>{t}</p>
+        ))}
+      </div>
     </div>
 
-    <div className="sceneText" style={styles.text}>
-      {text.map((t, i) => (
-        <p key={i}>{t}</p>
-      ))}
+    <div style={styles.nav}>
+      {introSlide > 1 &&
+        <span style={styles.prev} onTouchStart={prevSlide}>
+          {"<"}
+        </span>
+      }
+
+      {introSlide < slides.length &&
+        <span style={styles.next} onTouchStart={nextSlide}>
+          {">"}
+        </span>
+      }
     </div>
   </div>
 
 export default connect(
-  state => ({ showIntro: state.get('showIntro') }),
-  dispatch => ({ startIntro: event => dispatch({ type: "SHOW_INTRO" }) })
+  state => ({ introSlide: state.get('introSlide') }),
+  dispatch => ({
+    nextSlide: event => dispatch({ type: "NEXT_SLIDE" }),
+    prevSlide: event => dispatch({ type: "PREV_SLIDE" })
+  }),
 )(Introduction);

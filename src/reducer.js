@@ -4,13 +4,15 @@ const init = Immutable.fromJS({
   score: 0,
   gameOver: false,
   gameStart: true,
-  showIntro: false
+  introSlide: 0
 });
 
 export default function (state = init, action) {
   switch (action.type) {
-    case "SHOW_INTRO":
-      return state.set("showIntro", true);
+    case "NEXT_SLIDE":
+      return state.set("introSlide", state.get("introSlide") + 1);
+    case "PREV_SLIDE":
+      return state.set("introSlide", state.get("introSlide") - 1);
     case "ENEMY_DESTROYED":
       return state.set("score", state.get("score") + 10);
     case "GAME_OVER":
