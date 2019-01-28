@@ -4,6 +4,7 @@ export default {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
+    fontFamily: '"Miriam", Monaco, monospace',
   },
   background: {
     backgroundColor: "black",
@@ -69,9 +70,9 @@ export default {
     paddingTop: "15px",
   },
   small: {
-    fontSize: "small",
+    fontSize: "x-small"
   },
-  subText:  {
+  subText: {
     color: "#b7d0e8",
     fontFamily: '"Miriam", Monaco, monospace',
     fontWeight: 400,

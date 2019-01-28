@@ -33,7 +33,7 @@ export default [
   },
   {
     scene: 3,
-    img: "https://i.imgur.com/nyAitaA.jpg",
+    img: "https://i.imgur.com/n2c6s2f.jpg",
     text: [
       "VP Obama: Ahhhhh!!!",
       "President Trump: No!!! You’re the only one who knows how to fly the prototype!!! Oval Office to discuss the threat that brought them together."
@@ -41,28 +41,28 @@ export default [
   },
   {
     scene: 4,
-    img: "https://i.imgur.com/nyAitaA.jpg",
+    img: "https://i.imgur.com/c2fHoEp.jpg",
     text: [
       "President Trump: My hair!!! The hairspray is burning like jet fuel."
     ]
   },
   {
     scene: 5,
-    img: "https://i.imgur.com/nyAitaA.jpg",
+    img: "https://i.imgur.com/2mOaPSP.jpg",
     text: [
       "Scientists: Oh no. The President’s product acted as an accelerant causing his hair to burn hot enough to melt his brain."
     ]
   },
   {
     scene: 5,
-    img: "https://i.imgur.com/nyAitaA.jpg",
+    img: "https://i.imgur.com/2mOaPSP.jpg",
     text: [
       "VP Obama: My body is dying but my brain is intact. Only I know how to pilot the prototype. You must transplant my brain into Trump’s body."
     ]
   },
   {
     scene: 6,
-    img: "https://i.imgur.com/nyAitaA.jpg",
+    img: "https://i.imgur.com/rY9qZ2D.jpg",
     text: [
       "Cyborg Trump with Obama’s Brain: The shield that Mexico paid for won’t last much longer. Time to Fight Back!!!"
     ]

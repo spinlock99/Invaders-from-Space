@@ -1,21 +1,24 @@
 import React from "react"
 import { connect } from "react-redux";
+import InstallInstructions from "../install-instructions";
 import Button from '@material-ui/core/Button';
 import slides from "./slides";
 
 import styles from "./styles";
 
-const Introduction = ({ introSlide, nextSlide, prevSlide }) =>
+const Introduction = ({ currentSlide, nextSlide, prevSlide, installInstructions, showInstallInstruction }) =>
   <div style={styles.background}>
-    {introSlide == 0 ?
-      <div style={styles.btnContainer}>
-        <IntroButton startIntro={nextSlide} />
-        {introSlide}
-      </div>
+    {installInstructions ? <InstallInstructions />
       :
-      <div style={styles.slide}>
-        <Slide {...slides[introSlide - 1]} introSlide={introSlide} nextSlide={nextSlide} prevSlide={prevSlide} />
-      </div>
+      currentSlide == 0 ?
+        <div style={styles.btnContainer}>
+          <IntroButton startIntro={nextSlide} />
+          {currentSlide}
+        </div>
+        :
+        <div style={styles.slide}>
+          <Slide {...slides[currentSlide - 1]} currentSlide={currentSlide} nextSlide={nextSlide} prevSlide={prevSlide} showInstallInstruction={showInstallInstruction} />
+        </div>
     }
   </div>
 
@@ -24,7 +27,7 @@ const IntroButton = ({ startIntro }) =>
     Play Intro
   </Button>
 
-const Slide = ({ img, text, introSlide, nextSlide, prevSlide }) =>
+const Slide = ({ img, text, currentSlide, nextSlide, prevSlide, showInstallInstruction }) =>
   <div>
     <div>
       <div style={styles.sceneContainer}>
@@ -39,14 +42,20 @@ const Slide = ({ img, text, introSlide, nextSlide, prevSlide }) =>
     </div>
 
     <div style={styles.nav}>
-      {introSlide > 1 &&
+      {currentSlide > 1 &&
         <span style={styles.prev} onTouchStart={prevSlide}>
           {"<"}
         </span>
       }
 
-      {introSlide < slides.length &&
+      {currentSlide < slides.length &&
         <span style={styles.next} onTouchStart={nextSlide}>
+          {">"}
+        </span>
+      }
+
+      {currentSlide >= slides.length &&
+        <span style={styles.next} onTouchStart={showInstallInstruction}>
           {">"}
         </span>
       }
@@ -54,9 +63,13 @@ const Slide = ({ img, text, introSlide, nextSlide, prevSlide }) =>
   </div>
 
 export default connect(
-  state => ({ introSlide: state.get('introSlide') }),
+  state => ({
+    currentSlide: state.get('currentSlide'),
+    installInstructions: state.get('showInstallInstructions')
+  }),
   dispatch => ({
     nextSlide: event => dispatch({ type: "NEXT_SLIDE" }),
-    prevSlide: event => dispatch({ type: "PREV_SLIDE" })
+    prevSlide: event => dispatch({ type: "PREV_SLIDE" }),
+    showInstallInstruction: event => dispatch({ type: "SHOW_INSTALL_INSTRUCTIONS" })
   }),
 )(Introduction);

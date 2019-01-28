@@ -18,10 +18,10 @@ export default {
     maxHeight: "60vh"
   },
   scene: {
-    width: "90%",
-    paddingTop: "15px",
+    width: "80%",
+    paddingTop: "30px",
     boxSizing: "border-box",
-    maxHeight: "50vh"
+    maxHeight: "45vh"
   },
   text: {
     fontSize: "14px",
@@ -31,14 +31,22 @@ export default {
   },
   nav: {
     fontSize: "36px",
-    margin: "15px"
+    margin: "15px",
+    fontWeight: "bold",
   },
   prev: {
     display: "block",
-    float: "left"
+    float: "left",
+    position: "fixed",
+    zIndex: 10,
+    bottom: "10px"
   },
   next: {
     display: "block",
-    float: "right"
+    float: "right",
+    position: "fixed",
+    zIndex: 10,
+    bottom: "10px",
+    right: "15px"
   }
 }

@@ -1,4 +1,3 @@
-import InstallInstructions from "components/install-instructions";
 import React, { Component } from "react";
 // import db from "./db";
 import reducer from "reducer";
@@ -30,7 +29,7 @@ export class App extends Component {
       <Provider store={this.configureStore()}>
         {gameOn
           ? <Game width={this.props.width} height={this.props.height} ratio={this.props.ratio} />
-          : <Introduction /> // <InstallInstructions />
+          : <Introduction />
         }
       </Provider>
     );
