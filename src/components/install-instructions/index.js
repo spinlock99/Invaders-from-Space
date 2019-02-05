@@ -1,7 +1,7 @@
 import React from "react"
 import styles from "./styles"
-import ExitToApp from "material-ui/svg-icons/action/exit-to-app";
-import ContentAdd from 'material-ui/svg-icons/content/add';
+import ExitToApp from "@material-ui/icons/ExitToApp";
+import ContentAdd from "@material-ui/icons/Add";
 
 const InstallInstructions = props =>
   <div style={styles.flexColumn}>
@@ -20,7 +20,7 @@ const InstallInstructions = props =>
       Step 2:
     </h2>
     <div style={styles.instruction}>
-    <div style={styles.imperative}>Click</div>
+      <div style={styles.imperative}>Click</div>
       <AddToHomeScreen />
     </div>
     <p style={styles.subText}>to finish installing the app.</p>
