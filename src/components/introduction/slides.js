@@ -3,7 +3,7 @@ export default [
     scene: 1,
     img: "https://i.imgur.com/78KHHjw.jpg",
     text: [
-      "President Trump has won reelection and surprised the nation with the choice of a surprise running mate: Barack Obama.",
+      "President Trump has won reelection and surprised the nation with the choice of running mate: Barack Obama.",
       "The two meet in the Oval Office to discuss the threat that brought them together."
     ]
   },
@@ -36,7 +36,7 @@ export default [
     img: "https://i.imgur.com/n2c6s2f.jpg",
     text: [
       "VP Obama: Ahhhhh!!!",
-      "President Trump: No!!! You’re the only one who knows how to fly the prototype!!! Oval Office to discuss the threat that brought them together."
+      "President Trump: No!!! You’re the only one who knows how to fly the prototype!!!"
     ]
   },
   {
